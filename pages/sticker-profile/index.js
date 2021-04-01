@@ -1,8 +1,10 @@
 import Head from "next/head";
 import { useState } from "react";
 import { ToggleButtons, ToggleButton } from "../../components/toggle-buttons";
+import { useRouter } from "next/router";
 
 export default function StickerProfile() {
+  const router = useRouter();
   var [shape, setShape] = useState();
   var [size, setSize] = useState();
   var [colorCount, setColorCount] = useState("0");
@@ -11,6 +13,7 @@ export default function StickerProfile() {
 
   function handleNext() {
     if (shape && size && colorCount) {
+      router.push("/symbols");
       setShowWarn(false);
       setShowDebug(true);
     } else {
@@ -53,15 +56,15 @@ export default function StickerProfile() {
                 setSize(id);
               }}
             >
-              <ToggleButton value="1/4">1/4"</ToggleButton>
-              <ToggleButton value="1/2">1/2"</ToggleButton>
-              <ToggleButton value="1">1"</ToggleButton>
-              <ToggleButton value="1 1/2">1 1/2"</ToggleButton>
+              <ToggleButton value="quarter">1/4"</ToggleButton>
+              <ToggleButton value="half">1/2"</ToggleButton>
+              <ToggleButton value="inch">1"</ToggleButton>
+              <ToggleButton value="inch-half">1 1/2"</ToggleButton>
             </ToggleButtons>
           </div>
         </div>
         <div class="p-4 bg-gray-50 my-2">
-          <div>Enter how many colors</div>
+          <div>Number of colors</div>
           <div>
             <input
               onFocus={(event) => event.target.select()}

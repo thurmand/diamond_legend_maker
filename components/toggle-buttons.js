@@ -12,7 +12,9 @@ function ToggleButtons({ children, onSelect }) {
       return;
     }
     setActiveButton(id);
-    onSelect(value);
+    if (onSelect) {
+      onSelect(value);
+    }
   }
 
   return (
