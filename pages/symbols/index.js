@@ -1,110 +1,154 @@
 import Head from "next/head";
-import { useState } from "react";
-import { symbols } from "../../lib/symbols";
+import { useEffect, useState } from "react";
+import dmcList from "../../lib/dcm.json";
 
 export default function Symbols() {
-  var [selectedAlphas, setSelectedAlphas] = useState([]);
+  var [enteredSymbols, setEnteredSymbols] = useState([]);
 
-  function handleSelectedAlpha(value) {
-    var newValues = selectedAlphas;
-    if (selectedAlphas.includes(value)) {
-      newValues = newValues.filter((symbol) => symbol != value);
-      setSelectedAlphas(newValues);
-      return;
-    }
-    newValues.push(value);
-    setSelectedAlphas(newValues);
+  function onEnterSymbol(values) {
+    console.log({ values, enteredSymbols });
+    var list = enteredSymbols;
+    list.push({ values });
+    setEnteredSymbols(list);
   }
 
+  console.log({ enteredSymbols });
   return (
     <div>
       <Head>
         <title>Symbols</title>
       </Head>
-      <main class="flex items-center flex-col">
-        <div>Count Selected</div>
-        <div>Select Symbols</div>
-        <div>
-          <div>Alphabet</div>
-          {symbols.alphabet.map((n, i) => (
-            <SelectButton
-              class="p-2 border border-grey-50 rounded focus:outline-none"
-              key={i}
-              onSelect={handleSelectedAlpha}
-            >
-              {n}
-            </SelectButton>
-          ))}
-
-          <button>SELECT ALL</button>
-        </div>
-        <div>
-          <div>Numbers</div>
-          {symbols.numbers.map((n, i) => (
-            <button class="p-2 border border-grey-50 rounded" key={i}>
-              {n}
-            </button>
-          ))}
-          <button>SELECT ALL</button>
-        </div>
-        <div>
-          <div>Punctuation</div>
-          {symbols.punctuation.map((n, i) => (
-            <button class="p-2 border border-grey-50 rounded" key={i}>
-              {n}
-            </button>
-          ))}
-          <button>SELECT ALL</button>
-        </div>
-        <div>
-          <div>Wrappers</div>
-          {symbols.wrappers.map((n, i) => (
-            <button class="p-2 border border-grey-50 rounded" key={i}>
-              {n}
-            </button>
-          ))}
-          <button>SELECT ALL</button>
-        </div>
+      <main className="flex justify-center py-1">
+        <EnterSymbols className="p-4" onEnterSymbol={onEnterSymbol} />
+        <div className="border-2" />
+        <ListSymbols className="px-4 py-1" values={enteredSymbols} />
       </main>
     </div>
   );
 }
 
-function SelectButton({
-  onSelect,
-  children,
-  value,
-  className = "border p-2 focus:outline-none rounded",
-}) {
-  var [isSelected, setSelected] = useState(false);
-  var style = isSelected
-    ? "border-2 p-2 border-blue-500 focus:outline-none rounded"
-    : className;
+function EnterSymbols({ className, onEnterSymbol }) {
+  var [symbol, setSymbol] = useState("");
+  var [dmc, setDmc] = useState("");
+  var [background, setBackground] = useState("white");
 
-  function selected() {
-    if (isSelected) {
-      setSelected(false);
-      return;
-    }
-    setSelected(true);
-    if (onSelect) {
-      onSelect(value);
+  function onEnter(ele) {
+    if (event.key === "Enter") {
+      if (dmcList[dmc]?.hex) {
+        onEnterSymbol({ symbol, hex: dmcList[dmc].hex });
+      } else {
+        console.log("not a valid color");
+      }
     }
   }
 
+  useEffect(() => {
+    if (dmcList[dmc]?.hex) {
+      setBackground(`#${dmcList[dmc]?.hex}`);
+    } else {
+      setBackground("white");
+    }
+  }, [dmc]);
+
   return (
-    <button className={style} onClick={() => selected()}>
-      {children}
-    </button>
+    <div className={className} style={{ backgroundColor: background }}>
+      <div className="flex bg-white px-2 pb-2 rounded-lg">
+        <div className="flex-1">
+          Symbol
+          <div>
+            <input
+              onFocus={(event) => event.target.select()}
+              class="border"
+              type="text"
+              name="colorCount"
+              maxLength="1"
+              value={symbol}
+              onChange={({ target }) => {
+                setSymbol(target.value);
+              }}
+              autoComplete={"off"}
+            />
+          </div>
+        </div>
+        <div className="p-2" />
+        <div className="flex-1">
+          DMC Color
+          <div>
+            <input
+              onFocus={(event) => event.target.select()}
+              class="border"
+              type="number"
+              name="colorCount"
+              maxLength="5"
+              value={dmc}
+              onChange={({ target }) => {
+                setDmc(target.value);
+              }}
+              onKeyDown={onEnter}
+              autoComplete={"off"}
+            />
+          </div>
+        </div>
+      </div>
+      <div className="pb-8" />
+    </div>
   );
 }
 
-/*
-counter at the top of the screen - may not need to enter the color count on first page
-enter in all the colors or symbols first
-    then it runs through each one and you select symbol or type color
+function ListSymbols({ values, className }) {
+  console.log({ values, className });
+  return (
+    <div className={className}>
+      <div>List</div>
+      {values &&
+        values.map((n) => (
+          <div
+            className="flex justify-center"
+            style={{ backgroundColor: n.hex }}
+          >
+            {n.symbol}
+          </div>
+        ))}
+    </div>
+  );
+}
 
-have all the symbols in a list and type the color next them
+// function SelectButton({
+//   onSelect,
+//   children,
+//   value,
+//   className = "border p-2 focus:outline-none rounded",
+// }) {
+//   var [isSelected, setSelected] = useState(false);
+//   var style = isSelected
+//     ? "border-2 p-2 border-blue-500 focus:outline-none rounded"
+//     : className;
 
+//   function selected() {
+//     if (isSelected) {
+//       setSelected(false);
+//       return;
+//     }
+//     setSelected(true);
+//     if (onSelect) {
+//       onSelect(value);
+//     }
+//   }
 
-*/
+//   return (
+//     <button className={style} onClick={() => selected()}>
+//       {children}
+//     </button>
+//   );
+// }
+// var [selectedAlphas, setSelectedAlphas] = useState([]);
+// function handleSelectedAlpha(value) {
+//   var newValues = selectedAlphas;
+//   if (selectedAlphas.includes(value)) {
+//     newValues = newValues.filter((symbol) => symbol != value);
+//     setSelectedAlphas(newValues);
+//     return;
+//   }
+//   newValues.push(value);
+//   setSelectedAlphas(newValues);
+// }
