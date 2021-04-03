@@ -1,17 +1,16 @@
-import React, { useContext, createContext, useState } from "react";
+import React, { useContext, createContext, useState, useEffect } from "react";
 
 const ToggleContext = createContext();
 
-function ToggleButtons({ children, onSelect }) {
-  var [activeButton, setActiveButton] = useState(null);
+function ToggleButtons({ children, onSelect, value = "" }) {
+  var [activeButton, setActiveButton] = useState(value);
 
-  function setSelectedButton(id, value) {
-    if (activeButton == id) {
-      setActiveButton(null);
-
+  function setSelectedButton(value) {
+    if (activeButton == value) {
+      setActiveButton("");
       return;
     }
-    setActiveButton(id);
+    setActiveButton(value);
     if (onSelect) {
       onSelect(value);
     }
@@ -19,25 +18,22 @@ function ToggleButtons({ children, onSelect }) {
 
   return (
     <ToggleContext.Provider value={{ activeButton, setSelectedButton }}>
-      {React.Children.map(children, (child, i) => {
-        var el = React.cloneElement(child, { buttonId: i });
+      {React.Children.map(children, (child) => {
+        var el = React.cloneElement(child);
         return el;
       })}
     </ToggleContext.Provider>
   );
 }
 
-function ToggleButton({ buttonId, children, value }) {
+function ToggleButton({ children, value }) {
   var { activeButton, setSelectedButton } = useContext(ToggleContext);
   var style =
-    activeButton == buttonId
+    activeButton === value
       ? "border-2 p-2 border-blue-500 focus:outline-none rounded"
       : "border p-2 focus:outline-none rounded";
   return (
-    <button
-      className={style}
-      onClick={() => setSelectedButton(buttonId, value)}
-    >
+    <button className={style} onClick={() => setSelectedButton(value)}>
       {children}
     </button>
   );

@@ -1,9 +1,12 @@
 import Head from "next/head";
 import { useEffect, useState } from "react";
-import dmcList from "../../lib/dcm.json";
+import dmcList from "../../lib/dcm2.json";
+import { ToggleButtons, ToggleButton } from "../../components/toggle-buttons";
 
 export default function Symbols() {
   var [symbolList, setSymbolList] = useState([]);
+  var [shape, setShape] = useState("square");
+  var [size, setSize] = useState("inch");
 
   function onEnterSymbol(values) {
     if (symbolList.find((n) => n.symbol == values.symbol)) {
@@ -43,16 +46,52 @@ export default function Symbols() {
       <Head>
         <title>Symbols</title>
       </Head>
-      <main className="flex justify-center py-1">
-        <EnterSymbols className="p-4" onEnterSymbol={onEnterSymbol} />
-        <div className="border-2" />
-        <ListSymbols
-          className="px-4 py-1 w-28"
-          values={symbolList}
-          onTextColorChange={onTextColorChange}
-          onClear={onClear}
-          removeRow={removeRow}
-        />
+      <main className="flex-1 justify-center">
+        <div className="flex h-screen bg-gray-100">
+          <div>
+            <StickerProfile
+              onClick={(value) => {
+                setShape(value);
+              }}
+              value={shape}
+            />
+            <StickerSize
+              onClick={(value) => {
+                setSize(value);
+              }}
+              value={size}
+            />
+          </div>
+          <div className="border" />
+          <div className="flex flex-1 flex-col">
+            <div className="flex-1 flex">
+              <EnterSymbols
+                className="p-4 flex-1 flex flex-col"
+                onEnterSymbol={onEnterSymbol}
+              />
+            </div>
+            <div className="p-4 flex justify-end">
+              <button
+                onClick={() => {
+                  console.log("nope");
+                }}
+                className="border focus:outline-none rounded border-black px-2 bg-white"
+              >
+                {"Export >"}
+              </button>
+            </div>
+          </div>
+
+          <div className="border" />
+          <ListSymbols
+            className="px-4 py-1 w-28 h-full overflow-y-scroll"
+            values={symbolList}
+            onTextColorChange={onTextColorChange}
+            onClear={onClear}
+            removeRow={removeRow}
+            profile={shape}
+          />
+        </div>
       </main>
     </div>
   );
@@ -85,9 +124,9 @@ function EnterSymbols({ className, onEnterSymbol }) {
 
   return (
     <div className={className} style={{ backgroundColor: background }}>
-      <div className="flex bg-white px-2 pb-2 rounded-lg">
-        <div className="flex-1">
-          Symbol
+      <div className="flex justify-center bg-white px-2 pb-2 rounded-lg">
+        <div className="flex flex-col">
+          <p className="text-4xl">Symbol</p>
           <div>
             <input
               onFocus={(event) => event.target.select()}
@@ -104,8 +143,8 @@ function EnterSymbols({ className, onEnterSymbol }) {
           </div>
         </div>
         <div className="p-2" />
-        <div className="flex-1">
-          DMC Color
+        <div className="flex flex-col">
+          <p className="text-4xl">DMC Color</p>
           <div>
             <input
               onFocus={(event) => event.target.select()}
@@ -123,7 +162,13 @@ function EnterSymbols({ className, onEnterSymbol }) {
           </div>
         </div>
       </div>
-      <div className="pb-8" />
+
+      {background != "white" && (
+        <p
+          className="text-sm justify-end"
+          style={{ color: background, filter: "invert(100%)" }}
+        >{`color: ${background}`}</p>
+      )}
     </div>
   );
 }
@@ -134,6 +179,7 @@ function ListSymbols({
   onTextColorChange,
   onClear,
   removeRow,
+  profile,
 }) {
   return (
     <div className={className}>
@@ -141,7 +187,7 @@ function ListSymbols({
       <div className="flex items-center py-1">
         <button
           title="Delete all"
-          class="flex-1 border focus:outline-none hover:shadow text-red-500 font-bold"
+          className="flex-1 border focus:outline-none hover:shadow text-red-500 font-bold"
           onClick={onClear}
         >
           x
@@ -154,21 +200,24 @@ function ListSymbols({
       {values.map((n, i) => (
         <div key={i} className="flex items-center py-1">
           <div className="flex-1 justify-start">
-            <ColorBlock symbol={n.symbol} textColor={n.text} color={n.hex} />
-          </div>
-          <div className="px-1" />
-          <div>
-            <input
-              type="checkbox"
-              onClick={() => {
-                onTextColorChange(n.symbol);
-              }}
+            <ColorBlock
+              symbol={n.symbol}
+              textColor={n.text}
+              color={n.hex}
+              profile={profile}
             />
           </div>
           <div className="px-1" />
+          <input
+            type="checkbox"
+            onClick={() => {
+              onTextColorChange(n.symbol);
+            }}
+          />
+          <div className="px-1" />
           <button
             title="Remove color"
-            class="flex-1 border focus:outline-none hover:shadow text-red-500 font-bold"
+            className="flex-1 border focus:outline-none hover:shadow text-red-500 font-bold"
             onClick={() => {
               removeRow(n.symbol);
             }}
@@ -181,53 +230,47 @@ function ListSymbols({
   );
 }
 
-function ColorBlock({ symbol, color, textColor }) {
+function ColorBlock({ symbol, color, textColor, profile }) {
   return (
     <div
-      className="flex justify-center"
-      style={{ backgroundColor: color, color: textColor }}
+      className="flex justify-center text-lg w-7"
+      style={{
+        backgroundColor: color,
+        color: textColor,
+        borderRadius: profile == "circle" ? 50 : 0,
+      }}
     >
       {symbol}
     </div>
   );
 }
 
-// function SelectButton({
-//   onSelect,
-//   children,
-//   value,
-//   className = "border p-2 focus:outline-none rounded",
-// }) {
-//   var [isSelected, setSelected] = useState(false);
-//   var style = isSelected
-//     ? "border-2 p-2 border-blue-500 focus:outline-none rounded"
-//     : className;
+function StickerProfile({ onClick, value }) {
+  return (
+    <div className="p-4 bg-gray-50 my-2">
+      <div>Select the shape</div>
+      <div>
+        <ToggleButtons onSelect={onClick} value={value}>
+          <ToggleButton value="square">SQUARE</ToggleButton>
+          <ToggleButton value="circle">CIRCLE</ToggleButton>
+        </ToggleButtons>
+      </div>
+    </div>
+  );
+}
 
-//   function selected() {
-//     if (isSelected) {
-//       setSelected(false);
-//       return;
-//     }
-//     setSelected(true);
-//     if (onSelect) {
-//       onSelect(value);
-//     }
-//   }
-
-//   return (
-//     <button className={style} onClick={() => selected()}>
-//       {children}
-//     </button>
-//   );
-// }
-// var [selectedAlphas, setSelectedAlphas] = useState([]);
-// function handleSelectedAlpha(value) {
-//   var newValues = selectedAlphas;
-//   if (selectedAlphas.includes(value)) {
-//     newValues = newValues.filter((symbol) => symbol != value);
-//     setSelectedAlphas(newValues);
-//     return;
-//   }
-//   newValues.push(value);
-//   setSelectedAlphas(newValues);
-// }
+function StickerSize({ onClick, value }) {
+  return (
+    <div className="p-4 bg-gray-50 my-2">
+      <div>Select the size</div>
+      <div>
+        <ToggleButtons onSelect={onClick} value={value}>
+          <ToggleButton value="quarter">1/4"</ToggleButton>
+          <ToggleButton value="half">1/2"</ToggleButton>
+          <ToggleButton value="inch">1"</ToggleButton>
+          <ToggleButton value="inch-half">1 1/2"</ToggleButton>
+        </ToggleButtons>
+      </div>
+    </div>
+  );
+}
