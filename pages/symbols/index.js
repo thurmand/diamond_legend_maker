@@ -7,6 +7,7 @@ export default function Symbols() {
   var [symbolList, setSymbolList] = useState([]);
   var [shape, setShape] = useState("square");
   var [size, setSize] = useState("inch");
+  var [projectName, setProjectName] = useState("");
 
   function onEnterSymbol(values) {
     if (symbolList.find((n) => n.symbol == values.symbol)) {
@@ -49,6 +50,12 @@ export default function Symbols() {
       <main className="flex-1 justify-center">
         <div className="flex h-screen bg-gray-100">
           <div>
+            <ProjectName
+              onChange={({ target }) => {
+                setProjectName(target.value);
+              }}
+              value={projectName}
+            />
             <StickerProfile
               onClick={(value) => {
                 setShape(value);
@@ -134,7 +141,6 @@ function EnterSymbols({ className, onEnterSymbol }) {
       <div className="flex justify-evenly bg-white px-2 pb-2 rounded-lg">
         <div className="flex flex-col">
           <p className="text-3xl">Symbol</p>
-
           <input
             onFocus={(event) => event.target.select()}
             className="border-b-2 border-gray-400 text-4xl mt-2 w-24 focus:outline-none"
@@ -261,10 +267,24 @@ function ColorBlock({ symbol, color, textColor, profile }) {
   );
 }
 
+function ProjectName({ onChange, value }) {
+  return (
+    <div className="p-4 bg-gray-50 my-2">
+      <div className="text-xl">Project Name</div>
+      <input
+        type="text"
+        className="mt-2 border-b-2"
+        onChange={onChange}
+        value={value}
+      />
+    </div>
+  );
+}
+
 function StickerProfile({ onClick, value }) {
   return (
     <div className="p-4 bg-gray-50 my-2">
-      <div>Select the shape</div>
+      <div className="text-xl">Select the shape</div>
       <div>
         <ToggleButtons onSelect={onClick} value={value}>
           <ToggleButton value="square">SQUARE</ToggleButton>
@@ -278,7 +298,7 @@ function StickerProfile({ onClick, value }) {
 function StickerSize({ onClick, value }) {
   return (
     <div className="p-4 bg-gray-50 my-2">
-      <div>Select the size</div>
+      <div className="text-xl">Select the size</div>
       <div>
         <ToggleButtons onSelect={onClick} value={value}>
           <ToggleButton value="quarter">1/4"</ToggleButton>
