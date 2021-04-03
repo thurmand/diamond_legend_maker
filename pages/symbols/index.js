@@ -77,14 +77,14 @@ export default function Symbols() {
                 }}
                 className="border focus:outline-none rounded border-black px-2 bg-white"
               >
-                {"Export >"}
+                {"Preview"}
               </button>
             </div>
           </div>
 
           <div className="border" />
           <ListSymbols
-            className="px-4 py-1 w-28 h-full overflow-y-scroll"
+            className="px-4 py-1  h-full overflow-y-scroll"
             values={symbolList}
             onTextColorChange={onTextColorChange}
             onClear={onClear}
@@ -101,18 +101,8 @@ function EnterSymbols({ className, onEnterSymbol }) {
   var [symbol, setSymbol] = useState("");
   var [dmc, setDmc] = useState("");
   var [background, setBackground] = useState("white");
-
-  function onEnter(ele) {
-    if (event.key === "Enter") {
-      if (dmcList[dmc]?.hex) {
-        onEnterSymbol({ symbol, hex: `#${dmcList[dmc].hex}` });
-        setSymbol("");
-        setDmc("");
-      } else {
-        console.log("not a valid color");
-      }
-    }
-  }
+  let symbolInput = null;
+  let dmcInput = null;
 
   useEffect(() => {
     if (dmcList[dmc]?.hex) {
@@ -122,44 +112,66 @@ function EnterSymbols({ className, onEnterSymbol }) {
     }
   }, [dmc]);
 
+  useEffect(() => {
+    symbolInput.focus();
+  }, []);
+
+  function onEnter(ele) {
+    if (event.key === "Enter") {
+      if (dmcList[dmc]?.hex && symbol != "") {
+        onEnterSymbol({ symbol, hex: `#${dmcList[dmc].hex}`, dmc });
+        setSymbol("");
+        setDmc("");
+        symbolInput.focus();
+      } else {
+        console.log("not a valid color");
+      }
+    }
+  }
+
   return (
     <div className={className} style={{ backgroundColor: background }}>
-      <div className="flex justify-center bg-white px-2 pb-2 rounded-lg">
+      <div className="flex justify-evenly bg-white px-2 pb-2 rounded-lg">
         <div className="flex flex-col">
-          <p className="text-4xl">Symbol</p>
-          <div>
-            <input
-              onFocus={(event) => event.target.select()}
-              className="border"
-              type="text"
-              name="colorCount"
-              maxLength="1"
-              value={symbol}
-              onChange={({ target }) => {
-                setSymbol(target.value);
-              }}
-              autoComplete={"off"}
-            />
-          </div>
+          <p className="text-3xl">Symbol</p>
+
+          <input
+            onFocus={(event) => event.target.select()}
+            className="border-b-2 border-gray-400 text-4xl mt-2 w-24 focus:outline-none"
+            type="text"
+            maxLength="1"
+            value={symbol}
+            onChange={({ target }) => {
+              setSymbol(target.value);
+              dmcInput.focus();
+            }}
+            autoComplete="off"
+            ref={(ref) => {
+              symbolInput = ref;
+            }}
+          />
         </div>
         <div className="p-2" />
         <div className="flex flex-col">
-          <p className="text-4xl">DMC Color</p>
-          <div>
-            <input
-              onFocus={(event) => event.target.select()}
-              className="border"
-              type="number"
-              name="colorCount"
-              maxLength="5"
-              value={dmc}
-              onChange={({ target }) => {
-                setDmc(target.value);
-              }}
-              onKeyDown={onEnter}
-              autoComplete={"off"}
-            />
-          </div>
+          <p className="text-3xl">DMC #</p>
+          <input
+            onFocus={(event) => event.target.select()}
+            className="mt-2 border-b-2 border-gray-400 text-4xl w-24 focus:outline-none"
+            type="text"
+            maxLength="5"
+            value={dmc}
+            onChange={({ target }) => {
+              if (isNaN(target.value)) {
+                return;
+              }
+              setDmc(target.value);
+            }}
+            onKeyDown={onEnter}
+            autoComplete="off"
+            ref={(ref) => {
+              dmcInput = ref;
+            }}
+          />
         </div>
       </div>
 
@@ -194,7 +206,9 @@ function ListSymbols({
         </button>
         <div className="px-1" />
         <div className="flex-1">W</div>
-        <div className="flex-1"></div>
+        <div className="px-1" />
+        <p className="flex-1">DMC</p>
+        <div className="px-1" />
       </div>
 
       {values.map((n, i) => (
@@ -214,6 +228,8 @@ function ListSymbols({
               onTextColorChange(n.symbol);
             }}
           />
+          <div className="px-1" />
+          <p className="flex-1">{n.dmc}</p>
           <div className="px-1" />
           <button
             title="Remove color"

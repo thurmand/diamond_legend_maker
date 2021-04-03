@@ -30,8 +30,8 @@ function ToggleButton({ children, value }) {
   var { activeButton, setSelectedButton } = useContext(ToggleContext);
   var style =
     activeButton === value
-      ? "border-2 p-2 border-blue-500 focus:outline-none rounded"
-      : "border p-2 focus:outline-none rounded";
+      ? "border-2 p-2 border-blue-500 focus:outline-none rounded m-1"
+      : "border p-2 focus:outline-none rounded m-1";
   return (
     <button className={style} onClick={() => setSelectedButton(value)}>
       {children}
