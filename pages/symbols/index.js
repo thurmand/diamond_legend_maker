@@ -3,16 +3,41 @@ import { useEffect, useState } from "react";
 import dmcList from "../../lib/dcm.json";
 
 export default function Symbols() {
-  var [enteredSymbols, setEnteredSymbols] = useState([]);
+  var [symbolList, setSymbolList] = useState([]);
 
   function onEnterSymbol(values) {
-    console.log({ values, enteredSymbols });
-    var list = enteredSymbols;
-    list.push({ values });
-    setEnteredSymbols(list);
+    if (symbolList.find((n) => n.symbol == values.symbol)) {
+      console.log("Duplicate!");
+      return;
+    }
+    var newList = [...symbolList];
+    values.text == "black";
+    newList.push(values);
+    setSymbolList(newList);
   }
 
-  console.log({ enteredSymbols });
+  function onTextColorChange(symbol) {
+    var newList = [...symbolList];
+    var x = newList.findIndex((n) => n.symbol == symbol);
+    if (newList[x].text === "white") {
+      newList[x].text = "black";
+    } else {
+      newList[x].text = "white";
+    }
+
+    setSymbolList(newList);
+  }
+
+  function onClear() {
+    setSymbolList([]);
+  }
+
+  function removeRow(symbol) {
+    var newList = [...symbolList];
+    newList = newList.filter((n) => n.symbol != symbol);
+    setSymbolList(newList);
+  }
+
   return (
     <div>
       <Head>
@@ -21,7 +46,13 @@ export default function Symbols() {
       <main className="flex justify-center py-1">
         <EnterSymbols className="p-4" onEnterSymbol={onEnterSymbol} />
         <div className="border-2" />
-        <ListSymbols className="px-4 py-1" values={enteredSymbols} />
+        <ListSymbols
+          className="px-4 py-1 w-28"
+          values={symbolList}
+          onTextColorChange={onTextColorChange}
+          onClear={onClear}
+          removeRow={removeRow}
+        />
       </main>
     </div>
   );
@@ -35,7 +66,9 @@ function EnterSymbols({ className, onEnterSymbol }) {
   function onEnter(ele) {
     if (event.key === "Enter") {
       if (dmcList[dmc]?.hex) {
-        onEnterSymbol({ symbol, hex: dmcList[dmc].hex });
+        onEnterSymbol({ symbol, hex: `#${dmcList[dmc].hex}` });
+        setSymbol("");
+        setDmc("");
       } else {
         console.log("not a valid color");
       }
@@ -58,7 +91,7 @@ function EnterSymbols({ className, onEnterSymbol }) {
           <div>
             <input
               onFocus={(event) => event.target.select()}
-              class="border"
+              className="border"
               type="text"
               name="colorCount"
               maxLength="1"
@@ -76,7 +109,7 @@ function EnterSymbols({ className, onEnterSymbol }) {
           <div>
             <input
               onFocus={(event) => event.target.select()}
-              class="border"
+              className="border"
               type="number"
               name="colorCount"
               maxLength="5"
@@ -95,20 +128,66 @@ function EnterSymbols({ className, onEnterSymbol }) {
   );
 }
 
-function ListSymbols({ values, className }) {
-  console.log({ values, className });
+function ListSymbols({
+  values,
+  className,
+  onTextColorChange,
+  onClear,
+  removeRow,
+}) {
   return (
     <div className={className}>
-      <div>List</div>
-      {values &&
-        values.map((n) => (
-          <div
-            className="flex justify-center"
-            style={{ backgroundColor: n.hex }}
-          >
-            {n.symbol}
+      <p>Total: {values.length}</p>
+      <div className="flex items-center py-1">
+        <button
+          title="Delete all"
+          class="flex-1 border focus:outline-none hover:shadow text-red-500 font-bold"
+          onClick={onClear}
+        >
+          x
+        </button>
+        <div className="px-1" />
+        <div className="flex-1">W</div>
+        <div className="flex-1"></div>
+      </div>
+
+      {values.map((n, i) => (
+        <div key={i} className="flex items-center py-1">
+          <div className="flex-1 justify-start">
+            <ColorBlock symbol={n.symbol} textColor={n.text} color={n.hex} />
           </div>
-        ))}
+          <div className="px-1" />
+          <div>
+            <input
+              type="checkbox"
+              onClick={() => {
+                onTextColorChange(n.symbol);
+              }}
+            />
+          </div>
+          <div className="px-1" />
+          <button
+            title="Remove color"
+            class="flex-1 border focus:outline-none hover:shadow text-red-500 font-bold"
+            onClick={() => {
+              removeRow(n.symbol);
+            }}
+          >
+            x
+          </button>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function ColorBlock({ symbol, color, textColor }) {
+  return (
+    <div
+      className="flex justify-center"
+      style={{ backgroundColor: color, color: textColor }}
+    >
+      {symbol}
     </div>
   );
 }
