@@ -2,12 +2,65 @@ import Head from "next/head";
 import { useEffect, useState } from "react";
 import dmcList from "../../lib/dcm2.json";
 import { ToggleButtons, ToggleButton } from "../../components/toggle-buttons";
+import ReactPDF, {
+  Page,
+  Text,
+  View,
+  Document,
+  PDFViewer,
+} from "@react-pdf/renderer";
+
+var x = [
+  {
+    symbol: "a",
+    hex: "#000000",
+    text: "white",
+    shape: "square",
+    dmc: "815",
+  },
+  {
+    symbol: "a",
+    hex: "#ffffff",
+    text: "white",
+    shape: "square",
+    dmc: "815",
+  },
+  {
+    symbol: "a",
+    hex: "#000000",
+    text: "white",
+    shape: "square",
+    dmc: "815",
+  },
+  {
+    symbol: "a",
+    hex: "#000000",
+    text: "white",
+    shape: "square",
+    dmc: "815",
+  },
+  {
+    symbol: "a",
+    hex: "#000000",
+    text: "white",
+    shape: "square",
+    dmc: "815",
+  },
+  {
+    symbol: "a",
+    hex: "#000000",
+    text: "white",
+    shape: "square",
+    dmc: "815",
+  },
+];
 
 export default function Symbols() {
-  var [symbolList, setSymbolList] = useState([]);
+  var [symbolList, setSymbolList] = useState(x);
   var [shape, setShape] = useState("square");
   var [size, setSize] = useState("inch");
   var [projectName, setProjectName] = useState("");
+  var [preview, setPreview] = useState(false);
 
   function onEnterSymbol(values) {
     if (symbolList.find((n) => n.symbol == values.symbol)) {
@@ -72,15 +125,22 @@ export default function Symbols() {
           <div className="border" />
           <div className="flex flex-1 flex-col">
             <div className="flex-1 flex">
-              <EnterSymbols
-                className="p-4 flex-1 flex flex-col"
-                onEnterSymbol={onEnterSymbol}
-              />
+              {!preview && (
+                <EnterSymbols
+                  className="p-4 flex-1 flex flex-col"
+                  onEnterSymbol={onEnterSymbol}
+                />
+              )}
+              {preview && (
+                <PDFViewer style={{ flex: 1 }}>
+                  <PreviewPDF data={{ symbolList, shape, size, projectName }} />
+                </PDFViewer>
+              )}
             </div>
             <div className="p-4 flex justify-end">
               <button
                 onClick={() => {
-                  console.log("nope");
+                  setPreview(!preview);
                 }}
                 className="border focus:outline-none rounded border-black px-2 bg-white"
               >
@@ -308,5 +368,39 @@ function StickerSize({ onClick, value }) {
         </ToggleButtons>
       </div>
     </div>
+  );
+}
+
+function PreviewPDF({ data }) {
+  var dmcNumbers = data.symbolList.map((n) => n.dmc).join("    ");
+  var a4Inches = {
+    inch: 75,
+  };
+
+  return (
+    <Document>
+      <Page size="letter" style={{ backgroundColor: "white" }} wrap>
+        <Text style={{ paddingBottom: 16 }}>{data.projectName}</Text>
+        <Text style={{ textAlign: "justify" }}>{dmcNumbers}</Text>
+        <View style={{ paddingVertical: 16 }} />
+        <View style={{ flexDirection: "row" }}>
+          {data.symbolList.map((n, i) => (
+            <View
+              key={i}
+              style={{
+                backgroundColor: n.hex,
+                borderRadius: data.shape == "square" ? 0 : 50,
+                width: a4Inches[data.size],
+                // margin: 8,
+              }}
+            >
+              <Text style={{ color: n.text, textAlign: "center" }}>
+                {n.symbol}
+              </Text>
+            </View>
+          ))}
+        </View>
+      </Page>
+    </Document>
   );
 }
