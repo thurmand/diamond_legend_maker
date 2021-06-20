@@ -144,7 +144,7 @@ export default function Symbols() {
                 }}
                 className="border focus:outline-none rounded border-black px-2 bg-white"
               >
-                {"Preview"}
+                {"Preview PDF"}
               </button>
             </div>
           </div>
@@ -374,6 +374,7 @@ function StickerSize({ onClick, value }) {
 function PreviewPDF({ data }) {
   var dmcNumbers = data.symbolList.map((n) => n.dmc).join("    ");
   var a4Inches = {
+    quarter: 25,
     inch: 75,
   };
 
