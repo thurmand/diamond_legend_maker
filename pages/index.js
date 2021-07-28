@@ -10,19 +10,19 @@ import ReactPDF, {
   PDFViewer,
 } from "@react-pdf/renderer";
 
-var x = [
-  { symbol: "D", hex: "#FFD600", dmc: "444" },
-  { symbol: "T", hex: "#F27688", dmc: "899" },
-  { symbol: "a", hex: "#FFDFD7", dmc: "225" },
-  { symbol: "\\", hex: "#D15807", dmc: "900" },
-  { symbol: "3", hex: "#B39F8B", dmc: "3032" },
-  { symbol: "+", hex: "#9C599C", dmc: "33" },
-  { symbol: "Q", hex: "#000000", dmc: "310", text: "white" },
-  { symbol: "x", hex: "#E31D42", dmc: "666" },
-];
+// var x = [
+//   { symbol: "D", hex: "#FFD600", dmc: "444" },
+//   { symbol: "T", hex: "#F27688", dmc: "899" },
+//   { symbol: "a", hex: "#FFDFD7", dmc: "225" },
+//   { symbol: "\\", hex: "#D15807", dmc: "900" },
+//   { symbol: "3", hex: "#B39F8B", dmc: "3032" },
+//   { symbol: "+", hex: "#9C599C", dmc: "33" },
+//   { symbol: "Q", hex: "#000000", dmc: "310", text: "white" },
+//   { symbol: "x", hex: "#E31D42", dmc: "666" },
+// ];
 
 export default function Symbols() {
-  var [symbolList, setSymbolList] = useState(x);
+  var [symbolList, setSymbolList] = useState([]);
   var [shape, setShape] = useState("square");
   var [size, setSize] = useState("inch");
   var [projectName, setProjectName] = useState("");
@@ -32,7 +32,7 @@ export default function Symbols() {
 
   function onEnterSymbol(values) {
     setEnteredValue(values);
-    if (symbolList.find((n) => n.symbol == values.symbol)) {
+    if (symbolList.find((n) => n.symbol == values.symbol && n.symbol != " ")) {
       setIsDuplicate(true);
       return;
     }
@@ -75,7 +75,7 @@ export default function Symbols() {
         <title>Diamond Painting Legend</title>
       </Head>
       <main className="flex-1 justify-center">
-        <div className="flex flex-col h-screen">
+        <div className="flex flex-1 flex-col h-screen">
           <ProjectName
             onChange={({ target }) => {
               setProjectName(target.value);
@@ -84,7 +84,7 @@ export default function Symbols() {
           />
           <div className="border" />
           <div className="flex flex-1">
-            <div>
+            <div className="w-60">
               <StickerProfile
                 onClick={(value) => {
                   setShape(value);
@@ -97,10 +97,14 @@ export default function Symbols() {
                 }}
                 value={size}
               />
+              <div className="p-2">
+                Hints:
+                <p>- A space can be used as a Custom Symbol</p>
+              </div>
             </div>
             <div className="border" />
             <div className="flex flex-1 flex-col">
-              <div className="flex-1 flex">
+              {!preview && (
                 <div className="flex-1 flex flex-col">
                   {isDuplicate && (
                     <div
@@ -114,21 +118,18 @@ export default function Symbols() {
                       {`Symbol '${enteredValue.symbol}' or DMC# ${enteredValue.dmc} was a duplicate!`}
                     </div>
                   )}
-                  {!preview && (
-                    <EnterSymbols
-                      className="p-4 flex-1 flex flex-col"
-                      onEnterSymbol={onEnterSymbol}
-                    />
-                  )}
+                  <EnterSymbols
+                    className="p-4 flex-1 flex flex-col"
+                    onEnterSymbol={onEnterSymbol}
+                  />
                 </div>
-                {preview && (
-                  <PDFViewer style={{ flex: 1 }}>
-                    <PreviewPDF
-                      data={{ symbolList, shape, size, projectName }}
-                    />
-                  </PDFViewer>
-                )}
-              </div>
+              )}
+              {preview && (
+                <PDFViewer style={{ flex: 1 }}>
+                  <PreviewPDF data={{ symbolList, shape, size, projectName }} />
+                </PDFViewer>
+              )}
+
               <div className="p-4 flex justify-end">
                 <button
                   onClick={() => {
@@ -136,13 +137,13 @@ export default function Symbols() {
                   }}
                   className="border focus:outline-none rounded border-black px-2 bg-white"
                 >
-                  {"Preview PDF"}
+                  {!preview ? "Preview PDF" : "Add more Colors"}
                 </button>
               </div>
             </div>
             <div className="border" />
             <ListSymbols
-              className="px-4 py-1  h-full overflow-y-scroll"
+              className="px-4 py-1 h-full overflow-y-scroll"
               values={symbolList}
               onTextColorChange={onTextColorChange}
               onClear={onClear}
@@ -307,7 +308,7 @@ function ListSymbols({
 function ColorBlock({ symbol, color, textColor, profile }) {
   return (
     <div
-      className="flex justify-center items-center text-lg w-7"
+      className="flex justify-center items-center text-lg w-7 h-7"
       style={{
         backgroundColor: color,
         color: textColor,
