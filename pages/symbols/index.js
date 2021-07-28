@@ -11,48 +11,14 @@ import ReactPDF, {
 } from "@react-pdf/renderer";
 
 var x = [
-  {
-    symbol: "a",
-    hex: "#000000",
-    text: "white",
-    shape: "square",
-    dmc: "815",
-  },
-  {
-    symbol: "a",
-    hex: "#ffffff",
-    text: "white",
-    shape: "square",
-    dmc: "815",
-  },
-  {
-    symbol: "a",
-    hex: "#000000",
-    text: "white",
-    shape: "square",
-    dmc: "815",
-  },
-  {
-    symbol: "a",
-    hex: "#000000",
-    text: "white",
-    shape: "square",
-    dmc: "815",
-  },
-  {
-    symbol: "a",
-    hex: "#000000",
-    text: "white",
-    shape: "square",
-    dmc: "815",
-  },
-  {
-    symbol: "a",
-    hex: "#000000",
-    text: "white",
-    shape: "square",
-    dmc: "815",
-  },
+  { symbol: "D", hex: "#FFD600", dmc: "444" },
+  { symbol: "T", hex: "#F27688", dmc: "899" },
+  { symbol: "a", hex: "#FFDFD7", dmc: "225" },
+  { symbol: "\\", hex: "#D15807", dmc: "900" },
+  { symbol: "3", hex: "#B39F8B", dmc: "3032" },
+  { symbol: "+", hex: "#9C599C", dmc: "33" },
+  { symbol: "Q", hex: "#000000", dmc: "310", text: "white" },
+  { symbol: "x", hex: "#E31D42", dmc: "666" },
 ];
 
 export default function Symbols() {
@@ -315,7 +281,7 @@ function ListSymbols({
 function ColorBlock({ symbol, color, textColor, profile }) {
   return (
     <div
-      className="flex justify-center text-lg w-7"
+      className="flex justify-center items-center text-lg w-7"
       style={{
         backgroundColor: color,
         color: textColor,
@@ -364,7 +330,7 @@ function StickerSize({ onClick, value }) {
           <ToggleButton value="quarter">1/4"</ToggleButton>
           <ToggleButton value="half">1/2"</ToggleButton>
           <ToggleButton value="inch">1"</ToggleButton>
-          <ToggleButton value="inch-half">1 1/2"</ToggleButton>
+          <ToggleButton value="inchHalf">1 1/2"</ToggleButton>
         </ToggleButtons>
       </div>
     </div>
@@ -374,28 +340,39 @@ function StickerSize({ onClick, value }) {
 function PreviewPDF({ data }) {
   var dmcNumbers = data.symbolList.map((n) => n.dmc).join("    ");
   var a4Inches = {
-    quarter: 25,
-    inch: 75,
+    quarter: 18,
+    half: 36,
+    inch: 72,
+    inchHalf: 108,
   };
-
+  console.log(data);
   return (
     <Document>
-      <Page size="letter" style={{ backgroundColor: "white" }} wrap>
+      <Page size="letter" style={{ padding: 16 }} wrap>
         <Text style={{ paddingBottom: 16 }}>{data.projectName}</Text>
         <Text style={{ textAlign: "justify" }}>{dmcNumbers}</Text>
         <View style={{ paddingVertical: 16 }} />
-        <View style={{ flexDirection: "row" }}>
+        <View style={{ flexDirection: "row", flexWrap: "wrap" }}>
           {data.symbolList.map((n, i) => (
             <View
               key={i}
               style={{
+                alignItems: "center",
+                justifyContent: "center",
                 backgroundColor: n.hex,
-                borderRadius: data.shape == "square" ? 0 : 50,
+                borderRadius: data.shape == "square" ? 0 : 99,
                 width: a4Inches[data.size],
-                // margin: 8,
+                height: a4Inches[data.size],
+                marginRight: 8,
+                marginTop: 8,
               }}
             >
-              <Text style={{ color: n.text, textAlign: "center" }}>
+              <Text
+                style={{
+                  color: n.text,
+                  marginBottom: 2,
+                }}
+              >
                 {n.symbol}
               </Text>
             </View>
