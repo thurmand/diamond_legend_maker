@@ -27,12 +27,20 @@ export default function Symbols() {
   var [size, setSize] = useState("inch");
   var [projectName, setProjectName] = useState("");
   var [preview, setPreview] = useState(false);
+  var [isDuplicate, setIsDuplicate] = useState(false);
+  var [enteredValue, setEnteredValue] = useState({});
 
   function onEnterSymbol(values) {
+    setEnteredValue(values);
     if (symbolList.find((n) => n.symbol == values.symbol)) {
-      console.log("Duplicate!");
+      setIsDuplicate(true);
       return;
     }
+    if (symbolList.find((n) => n.dmc == values.dmc)) {
+      setIsDuplicate(true);
+      return;
+    }
+    setIsDuplicate(false);
     var newList = [...symbolList];
     values.text == "black";
     newList.push(values);
@@ -67,7 +75,7 @@ export default function Symbols() {
         <title>Diamond Painting Legend</title>
       </Head>
       <main className="flex-1 justify-center">
-        <div className="flex h-screen">
+        <div className="flex flex-col h-screen">
           <ProjectName
             onChange={({ target }) => {
               setProjectName(target.value);
@@ -75,57 +83,73 @@ export default function Symbols() {
             value={projectName}
           />
           <div className="border" />
-
-          <div>
-            <StickerProfile
-              onClick={(value) => {
-                setShape(value);
-              }}
-              value={shape}
-            />
-            <StickerSize
-              onClick={(value) => {
-                setSize(value);
-              }}
-              value={size}
-            />
-          </div>
-          <div className="border" />
-          <div className="flex flex-1 flex-col">
-            <div className="flex-1 flex">
-              {!preview && (
-                <EnterSymbols
-                  className="p-4 flex-1 flex flex-col"
-                  onEnterSymbol={onEnterSymbol}
-                />
-              )}
-              {preview && (
-                <PDFViewer style={{ flex: 1 }}>
-                  <PreviewPDF data={{ symbolList, shape, size, projectName }} />
-                </PDFViewer>
-              )}
-            </div>
-            <div className="p-4 flex justify-end">
-              <button
-                onClick={() => {
-                  setPreview(!preview);
+          <div className="flex flex-1">
+            <div>
+              <StickerProfile
+                onClick={(value) => {
+                  setShape(value);
                 }}
-                className="border focus:outline-none rounded border-black px-2 bg-white"
-              >
-                {"Preview PDF"}
-              </button>
+                value={shape}
+              />
+              <StickerSize
+                onClick={(value) => {
+                  setSize(value);
+                }}
+                value={size}
+              />
             </div>
+            <div className="border" />
+            <div className="flex flex-1 flex-col">
+              <div className="flex-1 flex">
+                <div className="flex-1 flex flex-col">
+                  {isDuplicate && (
+                    <div
+                      style={{
+                        display: "flex",
+                        color: "tomato",
+                        fontWeight: "bold",
+                        justifyContent: "center",
+                      }}
+                    >
+                      {`Symbol '${enteredValue.symbol}' or DMC# ${enteredValue.dmc} was a duplicate!`}
+                    </div>
+                  )}
+                  {!preview && (
+                    <EnterSymbols
+                      className="p-4 flex-1 flex flex-col"
+                      onEnterSymbol={onEnterSymbol}
+                    />
+                  )}
+                </div>
+                {preview && (
+                  <PDFViewer style={{ flex: 1 }}>
+                    <PreviewPDF
+                      data={{ symbolList, shape, size, projectName }}
+                    />
+                  </PDFViewer>
+                )}
+              </div>
+              <div className="p-4 flex justify-end">
+                <button
+                  onClick={() => {
+                    setPreview(!preview);
+                  }}
+                  className="border focus:outline-none rounded border-black px-2 bg-white"
+                >
+                  {"Preview PDF"}
+                </button>
+              </div>
+            </div>
+            <div className="border" />
+            <ListSymbols
+              className="px-4 py-1  h-full overflow-y-scroll"
+              values={symbolList}
+              onTextColorChange={onTextColorChange}
+              onClear={onClear}
+              removeRow={removeRow}
+              profile={shape}
+            />
           </div>
-
-          <div className="border" />
-          <ListSymbols
-            className="px-4 py-1  h-full overflow-y-scroll"
-            values={symbolList}
-            onTextColorChange={onTextColorChange}
-            onClear={onClear}
-            removeRow={removeRow}
-            profile={shape}
-          />
         </div>
       </main>
     </div>
