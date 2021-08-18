@@ -99,7 +99,10 @@ export default function Symbols() {
               />
               <div className="p-2">
                 Hints:
-                <p>- A space can be used as a Custom Symbol</p>
+                <p>
+                  - Entering a space as the symbol will create an empty entry.
+                  It can be used multiple times.
+                </p>
               </div>
             </div>
             <div className="border" />
