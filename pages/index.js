@@ -1,7 +1,7 @@
 import Head from "next/head";
-import { useEffect, useState } from "react";
-import dmcList from "../lib/dcm2.json";
+import { useState } from "react";
 import { ToggleButtons, ToggleButton } from "../components/toggle-buttons";
+import SymbolList from "../components/symbolList";
 import ReactPDF, {
   Page,
   Text,
@@ -9,6 +9,7 @@ import ReactPDF, {
   Document,
   PDFViewer,
 } from "@react-pdf/renderer";
+import EnterSymbols from "../components/enterSymbol";
 
 // var x = [
 //   { symbol: "D", hex: "#FFD600", dmc: "444" },
@@ -31,6 +32,7 @@ export default function Symbols() {
   var [enteredValue, setEnteredValue] = useState({});
 
   function onEnterSymbol(values) {
+    console.log(values);
     setEnteredValue(values);
     if (symbolList.find((n) => n.symbol == values.symbol && n.symbol != " ")) {
       setIsDuplicate(true);
@@ -43,7 +45,7 @@ export default function Symbols() {
     setIsDuplicate(false);
     var newList = [...symbolList];
     values.text == "black";
-    newList.push(values);
+    newList.unshift(values);
     setSymbolList(newList);
   }
 
@@ -63,9 +65,9 @@ export default function Symbols() {
     setSymbolList([]);
   }
 
-  function removeRow(symbol) {
+  function removeRow(value) {
     var newList = [...symbolList];
-    newList = newList.filter((n) => n.symbol != symbol);
+    newList = newList.filter((n) => n.dmc != value);
     setSymbolList(newList);
   }
 
@@ -101,7 +103,8 @@ export default function Symbols() {
                 Hints:
                 <p>
                   - Entering a space as the symbol will create an empty entry.
-                  It can be used multiple times.
+                  It can be used multiple times. This is for you to draw
+                  symbols.
                 </p>
               </div>
             </div>
@@ -145,8 +148,8 @@ export default function Symbols() {
               </div>
             </div>
             <div className="border" />
-            <ListSymbols
-              className="px-4 py-1 h-full overflow-y-scroll"
+            <SymbolList
+              className="px-4 py-1 h-full overflow-y-scroll max-w-sm w-full"
               values={symbolList}
               onTextColorChange={onTextColorChange}
               onClear={onClear}
@@ -156,169 +159,6 @@ export default function Symbols() {
           </div>
         </div>
       </main>
-    </div>
-  );
-}
-
-function EnterSymbols({ className, onEnterSymbol }) {
-  var [symbol, setSymbol] = useState("");
-  var [dmc, setDmc] = useState("");
-  var [background, setBackground] = useState("white");
-  let symbolInput = null;
-  let dmcInput = null;
-
-  useEffect(() => {
-    if (dmcList[dmc]?.hex) {
-      setBackground(`#${dmcList[dmc]?.hex}`);
-    } else {
-      setBackground("white");
-    }
-  }, [dmc]);
-
-  useEffect(() => {
-    symbolInput.focus();
-  }, []);
-
-  function onEnter(ele) {
-    if (event.key === "Enter") {
-      if (dmcList[dmc]?.hex && symbol != "") {
-        onEnterSymbol({ symbol, hex: `#${dmcList[dmc].hex}`, dmc });
-        setSymbol("");
-        setDmc("");
-        symbolInput.focus();
-      } else {
-        console.log("not a valid color");
-      }
-    }
-  }
-
-  return (
-    <div className={className} style={{ backgroundColor: background }}>
-      <div className="flex justify-evenly bg-white px-2 pb-2 rounded-lg">
-        <div className="flex flex-col">
-          <p className="text-3xl">Symbol</p>
-          <input
-            onFocus={(event) => event.target.select()}
-            className="border-b-2 border-gray-400 text-4xl mt-2 w-24 focus:outline-none"
-            type="text"
-            maxLength="1"
-            value={symbol}
-            onChange={({ target }) => {
-              setSymbol(target.value);
-              dmcInput.focus();
-            }}
-            autoComplete="off"
-            ref={(ref) => {
-              symbolInput = ref;
-            }}
-          />
-        </div>
-        <div className="p-2" />
-        <div className="flex flex-col">
-          <p className="text-3xl">DMC #</p>
-          <input
-            onFocus={(event) => event.target.select()}
-            className="mt-2 border-b-2 border-gray-400 text-4xl w-24 focus:outline-none"
-            type="text"
-            maxLength="5"
-            value={dmc}
-            onChange={({ target }) => {
-              if (isNaN(target.value)) {
-                return;
-              }
-              setDmc(target.value);
-            }}
-            onKeyDown={onEnter}
-            autoComplete="off"
-            ref={(ref) => {
-              dmcInput = ref;
-            }}
-          />
-        </div>
-      </div>
-
-      {background != "white" && (
-        <p
-          className="text-sm justify-end"
-          style={{ color: background, filter: "invert(100%)" }}
-        >{`color: ${background}`}</p>
-      )}
-    </div>
-  );
-}
-
-function ListSymbols({
-  values,
-  className,
-  onTextColorChange,
-  onClear,
-  removeRow,
-  profile,
-}) {
-  return (
-    <div className={className}>
-      <p>Total: {values.length}</p>
-      <div className="flex items-center py-1">
-        <button
-          title="Delete all"
-          className="flex-1 border focus:outline-none hover:shadow text-red-500 font-bold"
-          onClick={onClear}
-        >
-          x
-        </button>
-        <div className="px-1" />
-        <div className="flex-1">W</div>
-        <div className="px-1" />
-        <p className="flex-1">DMC</p>
-        <div className="px-1" />
-      </div>
-
-      {values.map((n, i) => (
-        <div key={i} className="flex items-center py-1">
-          <div className="flex-1 justify-start">
-            <ColorBlock
-              symbol={n.symbol}
-              textColor={n.text}
-              color={n.hex}
-              profile={profile}
-            />
-          </div>
-          <div className="px-1" />
-          <input
-            type="checkbox"
-            onClick={() => {
-              onTextColorChange(n.symbol);
-            }}
-          />
-          <div className="px-1" />
-          <p className="flex-1">{n.dmc}</p>
-          <div className="px-1" />
-          <button
-            title="Remove color"
-            className="flex-1 border focus:outline-none hover:shadow text-red-500 font-bold"
-            onClick={() => {
-              removeRow(n.symbol);
-            }}
-          >
-            x
-          </button>
-        </div>
-      ))}
-    </div>
-  );
-}
-
-function ColorBlock({ symbol, color, textColor, profile }) {
-  return (
-    <div
-      className="flex justify-center items-center text-lg w-7 h-7"
-      style={{
-        backgroundColor: color,
-        color: textColor,
-        borderRadius: profile == "circle" ? 50 : 0,
-      }}
-    >
-      {symbol}
     </div>
   );
 }
