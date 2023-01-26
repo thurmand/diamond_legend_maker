@@ -2,14 +2,15 @@ import Head from "next/head";
 import { useState } from "react";
 import { ToggleButtons, ToggleButton } from "../components/toggle-buttons";
 import SymbolList from "../components/symbolList";
-import ReactPDF, {
+import {
   Page,
   Text,
   View,
   Document,
   PDFViewer,
-} from "@react-pdf/renderer";
+} from "@react-pdf/renderer/lib/react-pdf.browser.cjs.js";
 import EnterSymbols from "../components/enterSymbol";
+import ReactPDF from "@react-pdf/renderer";
 
 // var x = [
 //   { symbol: "D", hex: "#FFD600", dmc: "444" },
@@ -32,7 +33,6 @@ export default function Symbols() {
   var [enteredValue, setEnteredValue] = useState({});
 
   function onEnterSymbol(values) {
-    console.log(values);
     setEnteredValue(values);
     if (symbolList.find((n) => n.symbol == values.symbol && n.symbol != " ")) {
       setIsDuplicate(true);
@@ -131,9 +131,13 @@ export default function Symbols() {
                 </div>
               )}
               {preview && (
-                <PDFViewer style={{ flex: 1 }}>
-                  <PreviewPDF data={{ symbolList, shape, size, projectName }} />
-                </PDFViewer>
+                <div className="bg-blue-100">
+                  <PDFViewer width={400} height={500}>
+                    <PreviewPDF
+                      data={{ symbolList, shape, size, projectName }}
+                    />
+                  </PDFViewer>
+                </div>
               )}
 
               <div className="p-4 flex justify-end">
@@ -213,10 +217,9 @@ function PreviewPDF({ data }) {
     halfInch: { size: 2, font: 28 },
     inch: { size: 1, font: 60 },
   };
-  console.log(data);
   return (
     <Document>
-      <Page size="letter" style={{ padding: 16 }} wrap>
+      <Page size="LETTER" style={{ padding: 16 }} wrap>
         <Text style={{ paddingBottom: 16 }}>{data.projectName}</Text>
         <Text style={{ fontSize: 16 }}>{dmcNumbers}</Text>
         <View style={{ paddingVertical: 16 }} />
