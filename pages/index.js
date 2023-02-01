@@ -65,12 +65,12 @@ export default function Symbols() {
   }
 
   return (
-    <div>
+    <div className="overflow-hidden h-screen w-screen flex flex-col">
       <Head>
         <title>Diamond Painting Legend</title>
       </Head>
-      <main className="flex-1 justify-center">
-        <div className="flex flex-1 flex-col h-screen">
+      <main className="flex flex-1 flex-col overflow-hidden">
+        <div className="flex flex-1 flex-col overflow-hidden">
           <ProjectName
             onChange={({ target }) => {
               setProjectName(target.value);
@@ -78,8 +78,8 @@ export default function Symbols() {
             value={projectName}
           />
           <div className="border" />
-          <div className="flex flex-1">
-            <div className="w-60">
+          <div className="flex flex-1 overflow-hidden">
+            <div className="max-w-xs">
               <StickerProfile
                 onClick={(value) => {
                   setShape(value);
@@ -144,14 +144,15 @@ export default function Symbols() {
               </div>
             </div>
             <div className="border" />
-            <SymbolList
-              className="px-4 py-1 h-full overflow-y-scroll max-w-sm w-full"
-              values={symbolList}
-              onTextColorChange={onTextColorChange}
-              onClear={onClear}
-              removeRow={removeRow}
-              profile={shape}
-            />
+            <div className="flex flex-1 flex-col p-4 max-w-sm min-w-[208px] overflow-hidden">
+              <SymbolList
+                values={symbolList}
+                onTextColorChange={onTextColorChange}
+                onClear={onClear}
+                removeRow={removeRow}
+                profile={shape}
+              />
+            </div>
           </div>
         </div>
       </main>
