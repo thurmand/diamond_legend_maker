@@ -2,13 +2,7 @@ import Head from "next/head";
 import { useState } from "react";
 import { ToggleButtons, ToggleButton } from "../components/toggle-buttons";
 import SymbolList from "../components/symbolList";
-import {
-  Page,
-  Text,
-  View,
-  Document,
-  PDFViewer,
-} from "@react-pdf/renderer/lib/react-pdf.browser.cjs.js";
+import { Page, Text, View, Document, PDFViewer } from "@react-pdf/renderer";
 import EnterSymbols from "../components/enterSymbol";
 
 // var x = [
