@@ -10,7 +10,6 @@ import {
   PDFViewer,
 } from "@react-pdf/renderer/lib/react-pdf.browser.cjs.js";
 import EnterSymbols from "../components/enterSymbol";
-import ReactPDF from "@react-pdf/renderer";
 
 // var x = [
 //   { symbol: "D", hex: "#FFD600", dmc: "444" },
@@ -131,15 +130,14 @@ export default function Symbols() {
                 </div>
               )}
               {preview && (
-                <div className="bg-blue-100">
-                  <PDFViewer width={400} height={500}>
+                <div className="flex-1 flex flex-col bg-blue-100">
+                  <PDFViewer height={"100%"}>
                     <PreviewPDF
                       data={{ symbolList, shape, size, projectName }}
                     />
                   </PDFViewer>
                 </div>
               )}
-
               <div className="p-4 flex justify-end">
                 <button
                   onClick={() => {
