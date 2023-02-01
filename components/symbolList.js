@@ -22,18 +22,19 @@ const SymbolList = ({
       <div className="flex-1">W</div>
       <p className="flex-1">DMC</p>
     </div>
-    <div className="overflow-y-scroll">
+    <div className="overflow-y-scroll flex flex-col">
       {values.map((n, i) => (
-        <div key={i} className="flex items-center ml-1 py-1 gap-2">
-          <Switch
-            id={i}
-            ripple={false}
-            color="white"
-            onChange={() => {
-              onTextColorChange(n.symbol);
-            }}
-          />
-
+        <div key={i} className="flex items-center ml-1 py-1 gap-2 ">
+          <span>
+            <Switch
+              id={i}
+              ripple={false}
+              color="white"
+              onChange={() => {
+                onTextColorChange(n.symbol);
+              }}
+            />
+          </span>
           <div className="flex flex-1 justify-center">
             <ColorBlock
               symbol={n.symbol}

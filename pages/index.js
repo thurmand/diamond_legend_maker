@@ -4,6 +4,7 @@ import { ToggleButtons, ToggleButton } from "../components/toggle-buttons";
 import SymbolList from "../components/symbolList";
 import { Page, Text, View, Document, PDFViewer } from "@react-pdf/renderer";
 import EnterSymbols from "../components/enterSymbol";
+import hints from "../lib/hints.json";
 
 // var x = [
 //   { symbol: "D", hex: "#FFD600", dmc: "444" },
@@ -94,11 +95,9 @@ export default function Symbols() {
               />
               <div className="p-2">
                 Hints:
-                <p>
-                  - Entering a space as the symbol will create an empty entry.
-                  It can be used multiple times. This is for you to draw
-                  symbols.
-                </p>
+                {hints.values.map((hint) => (
+                  <p>- {hint}</p>
+                ))}
               </div>
             </div>
             <div className="border" />
