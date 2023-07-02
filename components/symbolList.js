@@ -62,13 +62,15 @@ const SymbolList = ({
 export default SymbolList;
 
 function ColorBlock({ symbol, color, textColor, profile }) {
+  console.log({ color });
   return (
     <div
-      className="flex flex-1 justify-center items-center text-xl"
+      className="flex flex-1 justify-center items-center text-xl h-full"
       style={{
         backgroundColor: color,
         color: textColor,
         borderRadius: profile == "circle" ? 50 : 0,
+        height: !!symbol && 25,
       }}
     >
       {symbol}
