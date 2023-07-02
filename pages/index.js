@@ -216,7 +216,7 @@ function PreviewPDF({ data }) {
         <Text style={{ fontSize: 16 }}>{dmcNumbers}</Text>
         <View style={{ paddingVertical: 16 }} />
         <View style={{ flexDirection: "row", flexWrap: "wrap" }}>
-          {data.symbolList.map((n, i) => (
+          {data.symbolList.toReversed().map((n, i) => (
             <View
               key={i}
               style={{
