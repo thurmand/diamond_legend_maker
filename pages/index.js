@@ -1,35 +1,15 @@
 import Head from "next/head";
 import { useState } from "react";
-import { ToggleButtons, ToggleButton } from "../components/toggle-buttons";
 import SymbolList from "../components/symbolList";
 import { Page, Text, View, Document, PDFViewer } from "@react-pdf/renderer";
 import EnterSymbols from "../components/enterSymbol";
-import hints from "../lib/hints.json";
 import { Option, Select } from "@material-tailwind/react";
 import { PageHeader } from "../components/header";
 
 const PageTitle = "Diamond Drill Legend";
-var x = [
-  { symbol: "D", hex: "#FFD600", dmc: "444" },
-  { symbol: "T", hex: "#F27688", dmc: "899" },
-  { symbol: "a", hex: "#FFDFD7", dmc: "225" },
-  { symbol: "\\", hex: "#D15807", dmc: "900" },
-  { symbol: "3", hex: "#B39F8B", dmc: "3032" },
-  { symbol: "+", hex: "#9C599C", dmc: "33" },
-  { symbol: "Q", hex: "#000000", dmc: "310", text: "white" },
-  { symbol: "x", hex: "#E31D42", dmc: "666" },
-  { symbol: "D", hex: "#FFD600", dmc: "444" },
-  { symbol: "T", hex: "#F27688", dmc: "899" },
-  { symbol: "a", hex: "#FFDFD7", dmc: "225" },
-  { symbol: "\\", hex: "#D15807", dmc: "900" },
-  { symbol: "3", hex: "#B39F8B", dmc: "3032" },
-  { symbol: "+", hex: "#9C599C", dmc: "33" },
-  { symbol: "Q", hex: "#000000", dmc: "310", text: "white" },
-  { symbol: "x", hex: "#E31D42", dmc: "666" },
-];
 
 export default function Symbols() {
-  var [symbolList, setSymbolList] = useState(x);
+  var [symbolList, setSymbolList] = useState([]);
   var [shape, setShape] = useState("square");
   var [size, setSize] = useState("inch");
   var [projectName, setProjectName] = useState("");
@@ -85,7 +65,7 @@ export default function Symbols() {
         <PageHeader
           onChangeName={setProjectName}
           projectName={projectName}
-          className="flex flex-row px-2 border-b-2 flex-wrap"
+          className="flex flex-row px-2 pb-2 border-b-2 flex-wrap"
           title={PageTitle}
         >
           <div className="flex flex-row flex-wrap gap-2">
@@ -104,9 +84,9 @@ export default function Symbols() {
             </div>
           </div>
         </PageHeader>
-        <div className="flex flex-1 flex-col overflow-hidden ">
-          <div className="flex flex-1 overflow-hidden flex-wrap">
-            <div className="flex flex-1 flex-col">
+        <div className="overflow-hidden flex flex-1 flex-col">
+          <div className="overflow-hidden flex flex-1 flex-col sm:flex-row">
+            <div className="flex flex-none sm:flex-1 flex-col">
               {!preview && (
                 <div className="flex-1 flex flex-col">
                   {isDuplicate && (
@@ -136,58 +116,28 @@ export default function Symbols() {
                   </PDFViewer>
                 </div>
               )}
-              <div className="p-4 flex justify-end">
-                <button
-                  onClick={() => {
-                    setPreview(!preview);
-                  }}
-                  className="border focus:outline-none rounded border-black px-2 bg-white"
-                >
-                  {!preview ? "Preview PDF" : "Add more Colors"}
-                </button>
-              </div>
             </div>
-            <div className="flex flex-1 flex-col p-4 max-w-md min-w-[208px] overflow-hidden sm:border-l-2 sm:border-t-0 border-t-2 border-l-0">
-              <SymbolList
-                values={symbolList}
-                onTextColorChange={onTextColorChange}
-                onClear={onClear}
-                removeRow={removeRow}
-                profile={shape}
-              />
-            </div>
+            <SymbolList
+              className="overflow-hidden flex flex-1 flex-col gap-2 p-4 max-w-md min-w-[208px] sm:border-l-2 sm:border-t-0 border-t-2 border-l-0"
+              values={symbolList}
+              onTextColorChange={onTextColorChange}
+              onClear={onClear}
+              removeRow={removeRow}
+              profile={shape}
+            />
+          </div>
+          <div className="p-4 border-t-2 bg-white w-full flex justify-end grow-0 shrink-0">
+            <button
+              onClick={() => {
+                setPreview(!preview);
+              }}
+              className="border focus:outline-none rounded border-black px-2 bg-white"
+            >
+              {!preview ? "Preview PDF" : "Add more Colors"}
+            </button>
           </div>
         </div>
       </main>
-    </div>
-  );
-}
-
-function StickerProfile({ onClick, value }) {
-  return (
-    <div className="p-4 my-2">
-      <div className="text-xl">Shape</div>
-      <div>
-        <ToggleButtons onSelect={onClick} value={value}>
-          <ToggleButton value="square">SQUARE</ToggleButton>
-          <ToggleButton value="circle">CIRCLE</ToggleButton>
-        </ToggleButtons>
-      </div>
-    </div>
-  );
-}
-
-function StickerSize({ onClick, value }) {
-  return (
-    <div className="p-4 my-2">
-      <div className="text-xl">Size</div>
-      <div>
-        <ToggleButtons onSelect={onClick} value={value}>
-          <ToggleButton value="thirdInch">1/3"</ToggleButton>
-          <ToggleButton value="halfInch">1/2"</ToggleButton>
-          <ToggleButton value="inch">1"</ToggleButton>
-        </ToggleButtons>
-      </div>
     </div>
   );
 }

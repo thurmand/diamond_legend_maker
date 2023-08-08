@@ -6,8 +6,9 @@ const SymbolList = ({
   onClear,
   removeRow,
   profile,
+  className,
 }) => (
-  <div className="flex flex-1 flex-col gap-2 overflow-hidden">
+  <div className={className}>
     <div className="flex flex-row justify-between">
       <button
         title="Clear all"
@@ -22,7 +23,7 @@ const SymbolList = ({
       <div className="flex-1">W</div>
       <p className="flex-1">DMC</p>
     </div>
-    <div className="overflow-y-scroll flex flex-col">
+    <div className="overflow-scroll flex flex-col">
       {values.map((n, i) => (
         <div key={i} className="flex items-center ml-1 py-1 gap-2 ">
           <span>
