@@ -61,7 +61,7 @@ export default function Symbols() {
       <Head>
         <title>{PageTitle}</title>
       </Head>
-      <main className="flex flex-1 flex-col overflow-hidden max-w-7xl self-center xl:border-2 w-full xl:rounded-lg m-4 p-2">
+      <main className="flex flex-1 flex-col overflow-hidden max-w-7xl self-center xl:border-2 w-full xl:rounded-lg xl:m-4 xl:p-2">
         <PageHeader
           onChangeName={setProjectName}
           projectName={projectName}
@@ -126,7 +126,7 @@ export default function Symbols() {
               profile={shape}
             />
           </div>
-          <div className="p-4 border-t-2 bg-white w-full flex justify-end grow-0 shrink-0">
+          <div className="p-4 border-t-2 bg-white w-full flex justify-end">
             <button
               onClick={() => {
                 setPreview(!preview);
