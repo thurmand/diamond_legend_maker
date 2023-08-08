@@ -71,15 +71,15 @@ export default function Symbols() {
           <div className="flex flex-row flex-wrap gap-2">
             <div>
               <Select label="Shape" value={shape} onChange={setShape} size="lg">
-                <Option>Square</Option>
-                <Option>Circle</Option>
+                <Option value="square">Square</Option>
+                <Option value="circle">Circle</Option>
               </Select>
             </div>
             <div>
               <Select label="Size" value={size} onChange={setSize} size="lg">
-                <Option>1/3"</Option>
-                <Option>1/2"</Option>
-                <Option>1"</Option>
+                <Option value="thirdInch">1/3"</Option>
+                <Option value="halfInch">1/2"</Option>
+                <Option value="inch">1"</Option>
               </Select>
             </div>
           </div>

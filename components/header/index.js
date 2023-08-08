@@ -2,7 +2,7 @@ import { ProjectName } from "../projectName";
 
 export const PageHeader = ({
   projectName,
-  setProjectName,
+  onChangeName,
   children,
   className,
   title,
@@ -13,7 +13,7 @@ export const PageHeader = ({
       <div>
         <ProjectName
           onChange={({ target }) => {
-            setProjectName(target.value);
+            onChangeName(target.value);
           }}
           value={projectName}
         />
