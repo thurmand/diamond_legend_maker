@@ -61,7 +61,7 @@ export default function Symbols() {
       <Head>
         <title>{PageTitle}</title>
       </Head>
-      <main className="flex flex-1 flex-col overflow-hidden">
+      <main className="flex flex-1 flex-col overflow-hidden max-w-7xl self-center xl:border-2 w-full xl:rounded-lg m-4 p-2">
         <PageHeader
           onChangeName={setProjectName}
           projectName={projectName}
@@ -118,7 +118,7 @@ export default function Symbols() {
               )}
             </div>
             <SymbolList
-              className="overflow-hidden flex flex-1 flex-col gap-2 p-4 max-w-md min-w-[208px] sm:border-l-2 sm:border-t-0 border-t-2 border-l-0"
+              className="overflow-hidden flex flex-1 flex-col gap-2 p-4 max-w-md min-w-[208px] sm:border-l-2 sm:border-t-0 border-t-2 border-l-0 sm:my-4"
               values={symbolList}
               onTextColorChange={onTextColorChange}
               onClear={onClear}

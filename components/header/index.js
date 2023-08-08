@@ -8,7 +8,7 @@ export const PageHeader = ({
   title,
 }) => (
   <>
-    <p className="p-1 font-bold">{title}</p>
+    <p className="sm:p-1 font-bold">{title}</p>
     <div className={className}>
       <div>
         <ProjectName
