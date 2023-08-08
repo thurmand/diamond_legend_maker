@@ -65,7 +65,7 @@ export default function Symbols() {
         <PageHeader
           onChangeName={setProjectName}
           projectName={projectName}
-          className="flex flex-row px-2 pb-2 border-b-2 flex-wrap"
+          className="flex flex-row px-2 pb-2 border-b-2 flex-wrap items-center justify-between"
           title={PageTitle}
         >
           <div className="flex flex-row flex-wrap gap-2">
