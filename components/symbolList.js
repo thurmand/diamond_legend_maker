@@ -9,7 +9,6 @@ const SymbolList = ({
 }) => (
   <div className="flex flex-1 flex-col gap-2 overflow-hidden">
     <div className="flex flex-row justify-between">
-      <p>Total: {values.length}</p>
       <button
         title="Clear all"
         className="border focus:outline-none hover:shadow hover:text-white hover:bg-red-500 text-red-500 font-bold bg-white rounded px-2"
@@ -17,6 +16,7 @@ const SymbolList = ({
       >
         Clear All
       </button>
+      <p>Total: {values.length}</p>
     </div>
     <div className="flex items-center gap-2">
       <div className="flex-1">W</div>

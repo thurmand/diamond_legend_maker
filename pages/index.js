@@ -5,20 +5,31 @@ import SymbolList from "../components/symbolList";
 import { Page, Text, View, Document, PDFViewer } from "@react-pdf/renderer";
 import EnterSymbols from "../components/enterSymbol";
 import hints from "../lib/hints.json";
+import { Option, Select } from "@material-tailwind/react";
+import { PageHeader } from "../components/header";
 
-// var x = [
-//   { symbol: "D", hex: "#FFD600", dmc: "444" },
-//   { symbol: "T", hex: "#F27688", dmc: "899" },
-//   { symbol: "a", hex: "#FFDFD7", dmc: "225" },
-//   { symbol: "\\", hex: "#D15807", dmc: "900" },
-//   { symbol: "3", hex: "#B39F8B", dmc: "3032" },
-//   { symbol: "+", hex: "#9C599C", dmc: "33" },
-//   { symbol: "Q", hex: "#000000", dmc: "310", text: "white" },
-//   { symbol: "x", hex: "#E31D42", dmc: "666" },
-// ];
+const PageTitle = "Diamond Drill Legend";
+var x = [
+  { symbol: "D", hex: "#FFD600", dmc: "444" },
+  { symbol: "T", hex: "#F27688", dmc: "899" },
+  { symbol: "a", hex: "#FFDFD7", dmc: "225" },
+  { symbol: "\\", hex: "#D15807", dmc: "900" },
+  { symbol: "3", hex: "#B39F8B", dmc: "3032" },
+  { symbol: "+", hex: "#9C599C", dmc: "33" },
+  { symbol: "Q", hex: "#000000", dmc: "310", text: "white" },
+  { symbol: "x", hex: "#E31D42", dmc: "666" },
+  { symbol: "D", hex: "#FFD600", dmc: "444" },
+  { symbol: "T", hex: "#F27688", dmc: "899" },
+  { symbol: "a", hex: "#FFDFD7", dmc: "225" },
+  { symbol: "\\", hex: "#D15807", dmc: "900" },
+  { symbol: "3", hex: "#B39F8B", dmc: "3032" },
+  { symbol: "+", hex: "#9C599C", dmc: "33" },
+  { symbol: "Q", hex: "#000000", dmc: "310", text: "white" },
+  { symbol: "x", hex: "#E31D42", dmc: "666" },
+];
 
 export default function Symbols() {
-  var [symbolList, setSymbolList] = useState([]);
+  var [symbolList, setSymbolList] = useState(x);
   var [shape, setShape] = useState("square");
   var [size, setSize] = useState("inch");
   var [projectName, setProjectName] = useState("");
@@ -68,39 +79,33 @@ export default function Symbols() {
   return (
     <div className="overflow-hidden h-screen w-screen flex flex-col">
       <Head>
-        <title>Diamond Painting Legend</title>
+        <title>{PageTitle}</title>
       </Head>
       <main className="flex flex-1 flex-col overflow-hidden">
-        <div className="flex flex-1 flex-col overflow-hidden">
-          <ProjectName
-            onChange={({ target }) => {
-              setProjectName(target.value);
-            }}
-            value={projectName}
-          />
-          <div className="border" />
-          <div className="flex flex-1 overflow-hidden">
-            <div className="max-w-xs">
-              <StickerProfile
-                onClick={(value) => {
-                  setShape(value);
-                }}
-                value={shape}
-              />
-              <StickerSize
-                onClick={(value) => {
-                  setSize(value);
-                }}
-                value={size}
-              />
-              <div className="p-2">
-                Hints:
-                {hints.values.map((hint) => (
-                  <p>- {hint}</p>
-                ))}
-              </div>
+        <PageHeader
+          onChangeName={setProjectName}
+          projectName={projectName}
+          className="flex flex-row px-2 border-b-2 flex-wrap"
+          title={PageTitle}
+        >
+          <div className="flex flex-row flex-wrap gap-2">
+            <div>
+              <Select label="Shape" value={shape} onChange={setShape} size="lg">
+                <Option>Square</Option>
+                <Option>Circle</Option>
+              </Select>
             </div>
-            <div className="border" />
+            <div>
+              <Select label="Size" value={size} onChange={setSize} size="lg">
+                <Option>1/3"</Option>
+                <Option>1/2"</Option>
+                <Option>1"</Option>
+              </Select>
+            </div>
+          </div>
+        </PageHeader>
+        <div className="flex flex-1 flex-col overflow-hidden ">
+          <div className="flex flex-1 overflow-hidden flex-wrap">
             <div className="flex flex-1 flex-col">
               {!preview && (
                 <div className="flex-1 flex flex-col">
@@ -142,8 +147,7 @@ export default function Symbols() {
                 </button>
               </div>
             </div>
-            <div className="border" />
-            <div className="flex flex-1 flex-col p-4 max-w-sm min-w-[208px] overflow-hidden">
+            <div className="flex flex-1 flex-col p-4 max-w-md min-w-[208px] overflow-hidden sm:border-l-2 sm:border-t-0 border-t-2 border-l-0">
               <SymbolList
                 values={symbolList}
                 onTextColorChange={onTextColorChange}
@@ -155,20 +159,6 @@ export default function Symbols() {
           </div>
         </div>
       </main>
-    </div>
-  );
-}
-
-function ProjectName({ onChange, value }) {
-  return (
-    <div className="px-2 my-2">
-      <input
-        type="text"
-        className="mt-2 border-b border-gray-600 text-2xl"
-        onChange={onChange}
-        value={value}
-        placeholder="Legend Name"
-      />
     </div>
   );
 }
