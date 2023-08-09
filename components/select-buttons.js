@@ -31,7 +31,6 @@ function SelectButtons({ children, onSelect }) {
 
 function SelectButton({ buttonId, children, value, className }) {
   var { activeButtons, setSelectedButton } = useContext(SelectContext);
-  console.log({ activeButtons });
   var style = activeButtons.includes(buttonId)
     ? "border-2 p-2 border-blue-500 focus:outline-none rounded"
     : className || "border p-2 focus:outline-none rounded";

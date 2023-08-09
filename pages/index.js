@@ -9,13 +9,13 @@ import { PageHeader } from "../components/header";
 const PageTitle = "Diamond Drill Legend";
 
 export default function Symbols() {
-  var [symbolList, setSymbolList] = useState([]);
-  var [shape, setShape] = useState("square");
-  var [size, setSize] = useState("inch");
-  var [projectName, setProjectName] = useState("");
-  var [preview, setPreview] = useState(false);
-  var [isDuplicate, setIsDuplicate] = useState(false);
-  var [enteredValue, setEnteredValue] = useState({});
+  const [symbolList, setSymbolList] = useState([]);
+  const [shape, setShape] = useState("square");
+  const [size, setSize] = useState("inch");
+  const [projectName, setProjectName] = useState("");
+  const [preview, setPreview] = useState(false);
+  const [isDuplicate, setIsDuplicate] = useState(false);
+  const [enteredValue, setEnteredValue] = useState({});
 
   function onEnterSymbol(values) {
     setEnteredValue(values);
@@ -28,14 +28,15 @@ export default function Symbols() {
       return;
     }
     setIsDuplicate(false);
-    var newList = [...symbolList];
-    values.text == "black";
-    newList.unshift(values);
+    const newList = [...symbolList];
+    values.text = "black";
+    values.orderId = newList.length + 1;
+    newList.push(values);
     setSymbolList(newList);
   }
 
   function onTextColorChange(symbol) {
-    var newList = [...symbolList];
+    const newList = [...symbolList];
     var x = newList.findIndex((n) => n.symbol == symbol);
     if (newList[x].text === "white") {
       newList[x].text = "black";
@@ -51,7 +52,7 @@ export default function Symbols() {
   }
 
   function removeRow(value) {
-    var newList = [...symbolList];
+    let newList = [...symbolList];
     newList = newList.filter((n) => n.dmc != value);
     setSymbolList(newList);
   }
@@ -119,7 +120,7 @@ export default function Symbols() {
             </div>
             <SymbolList
               className="overflow-hidden flex flex-1 flex-col gap-2 p-4 max-w-md min-w-[208px] sm:border-l-2 sm:border-t-0 border-t-2 border-l-0 sm:my-4"
-              values={symbolList}
+              values={symbolList.slice().reverse()}
               onTextColorChange={onTextColorChange}
               onClear={onClear}
               removeRow={removeRow}
@@ -143,8 +144,10 @@ export default function Symbols() {
 }
 
 function PreviewPDF({ data }) {
-  var dmcNumbers = data.symbolList.map((n) => n.dmc).join("   ");
-  var a4Inches = {
+  const { symbolList, projectName, shape, size } = data;
+  const dmcNumbers = symbolList.map((n) => n.dmc).join("   ");
+  const reversedList = symbolList;
+  const a4Inches = {
     thirdInch: { size: 3, font: 16 },
     halfInch: { size: 2, font: 28 },
     inch: { size: 1, font: 60 },
@@ -152,26 +155,26 @@ function PreviewPDF({ data }) {
   return (
     <Document>
       <Page size="LETTER" style={{ padding: 16 }} wrap>
-        <Text style={{ paddingBottom: 16 }}>{data.projectName}</Text>
+        <Text style={{ paddingBottom: 16 }}>{projectName}</Text>
         <Text style={{ fontSize: 16 }}>{dmcNumbers}</Text>
         <View style={{ paddingVertical: 16 }} />
         <View style={{ flexDirection: "row", flexWrap: "wrap" }}>
-          {data.symbolList.reverse().map((n, i) => (
+          {reversedList.map((n, i) => (
             <View
               key={i}
               style={{
                 alignItems: "center",
                 justifyContent: "center",
                 backgroundColor: n.hex,
-                borderRadius: data.shape == "square" ? 0 : 99,
-                width: 72 / a4Inches[data.size].size,
-                height: 72 / a4Inches[data.size].size,
+                borderRadius: shape == "square" ? 0 : 99,
+                width: 72 / a4Inches[size].size,
+                height: 72 / a4Inches[size].size,
               }}
             >
               <Text
                 style={{
                   color: n.text,
-                  fontSize: a4Inches[data.size].font,
+                  fontSize: a4Inches[size].font,
                 }}
               >
                 {n.symbol}

@@ -55,8 +55,8 @@ export default function EnterSymbols({ className, onEnterSymbol }) {
           />
         </div>
         <div className="p-2" />
-        <div className="flex flex-col">
-          <p className="text-3xl">DMC #</p>
+        <div className="flex flex-col items-center">
+          <p className="text-3xl">Color Code</p>
           <input
             onFocus={(event) => event.target.select()}
             className="mt-2 border-b-2 border-gray-400 text-4xl w-24 focus:outline-none"

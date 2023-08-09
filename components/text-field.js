@@ -1,4 +1,4 @@
-export default function TextField({title}) {
+export default function TextField({ title }) {
   return (
     <div>
       {title}
@@ -11,7 +11,6 @@ export default function TextField({title}) {
           maxLength="1"
           value={value}
           onChange={({ target }) => {
-            console.log(target.value);
             setValue(target.value);
           }}
           onkeydown={onEnter}
