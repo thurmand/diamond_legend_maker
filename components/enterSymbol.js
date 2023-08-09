@@ -31,6 +31,9 @@ export default function EnterSymbols({ className, onEnterSymbol }) {
         console.log("not a valid color");
       }
     }
+    if (event.key === "Backspace" && dmc === "") {
+      symbolInput.focus();
+    }
   }
 
   return (
@@ -46,7 +49,9 @@ export default function EnterSymbols({ className, onEnterSymbol }) {
             value={symbol}
             onChange={({ target }) => {
               setSymbol(target.value);
-              dmcInput.focus();
+              if (target.value !== "") {
+                dmcInput.focus();
+              }
             }}
             autoComplete="off"
             ref={(ref) => {
