@@ -5,6 +5,7 @@ import { Page, Text, View, Document, PDFViewer } from "@react-pdf/renderer";
 import EnterSymbols from "../components/enterSymbol";
 import { Option, Select } from "@material-tailwind/react";
 import { PageHeader } from "../components/header";
+import { arrayMove } from "react-movable";
 
 const PageTitle = "Diamond Drill Legend";
 
@@ -31,13 +32,13 @@ export default function Symbols() {
     const newList = [...symbolList];
     values.text = "black";
     values.orderId = newList.length + 1;
-    newList.push(values);
+    newList.unshift(values);
     setSymbolList(newList);
   }
 
-  function onTextColorChange(symbol) {
+  function onTextColorChange(id) {
     const newList = [...symbolList];
-    var x = newList.findIndex((n) => n.symbol == symbol);
+    var x = newList.findIndex((n) => n.orderId == id);
     if (newList[x].text === "white") {
       newList[x].text = "black";
     } else {
@@ -56,6 +57,11 @@ export default function Symbols() {
     newList = newList.filter((n) => n.dmc != value);
     setSymbolList(newList);
   }
+
+  const updateListOrder = (oldIndex, newIndex) => {
+    const newList = arrayMove(symbolList, oldIndex, newIndex);
+    setSymbolList(newList);
+  };
 
   return (
     <div className="overflow-hidden h-screen w-screen flex flex-col">
@@ -120,11 +126,12 @@ export default function Symbols() {
             </div>
             <SymbolList
               className="overflow-hidden flex flex-1 flex-col gap-2 p-4 max-w-md min-w-[208px] sm:border-l-2 sm:border-t-0 border-t-2 border-l-0 sm:my-4"
-              values={symbolList.slice().reverse()}
+              values={symbolList}
               onTextColorChange={onTextColorChange}
               onClear={onClear}
               removeRow={removeRow}
               profile={shape}
+              onOrderChange={updateListOrder}
             />
           </div>
           <div className="p-4 border-t-2 bg-white w-full flex justify-end">
@@ -146,7 +153,7 @@ export default function Symbols() {
 function PreviewPDF({ data }) {
   const { symbolList, projectName, shape, size } = data;
   const dmcNumbers = symbolList.map((n) => n.dmc).join("   ");
-  const reversedList = symbolList;
+  const reversedList = symbolList.slice().reverse();
   const a4Inches = {
     thirdInch: { size: 3, font: 16 },
     halfInch: { size: 2, font: 28 },
