@@ -73,16 +73,20 @@ const LegendItem = React.forwardRef(
         {...props}
         ref={ref}
       >
-        <button
-          title="Symbol Color"
-          className="border border-black focus:outline-none hover:shadow text-black p-px w-6 h-6"
-          onClick={() => {
-            onTextColorChange(value.orderId);
-          }}
-        >
-          <div className={`h-full w-full bg-${value.text}`}></div>
-        </button>
-        <div className="flex flex-1 justify-center">
+        <div className="flex flex-1 flex-col">
+          {value.symbol !== " " && (
+            <Switch
+              label="White"
+              id={value.orderId}
+              ripple={false}
+              color="white"
+              onChange={() => {
+                onTextColorChange(value.orderId);
+              }}
+            />
+          )}
+        </div>
+        <div className="flex flex-1 ">
           <ColorBlock
             symbol={value.symbol}
             textColor={value.text}
@@ -90,7 +94,7 @@ const LegendItem = React.forwardRef(
             profile={profile}
           />
         </div>
-        <p className="flex-1 text-xl">{value.dmc}</p>
+        <p className="flex-1 text-xl flex">{value.dmc}</p>
         <button
           title="Remove color"
           className="border focus:outline-none hover:shadow hover:text-white hover:bg-red-500 text-red-500 font-bold bg-white rounded px-2"

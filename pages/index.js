@@ -6,6 +6,7 @@ import EnterSymbols from "../components/enterSymbol";
 import { Option, Select } from "@material-tailwind/react";
 import { PageHeader } from "../components/header";
 import { arrayMove } from "react-movable";
+import hints from "../lib/hints.json";
 
 const PageTitle = "Diamond Drill Legend";
 
@@ -83,7 +84,13 @@ export default function Symbols() {
               </Select>
             </div>
             <div>
-              <Select label="Size" value={size} onChange={setSize} size="lg">
+              <Select
+                label="Size"
+                value={size}
+                onChange={setSize}
+                size="lg"
+                color="black"
+              >
                 <Option value="thirdInch">1/3"</Option>
                 <Option value="halfInch">1/2"</Option>
                 <Option value="inch">1"</Option>
@@ -134,15 +141,23 @@ export default function Symbols() {
               onOrderChange={updateListOrder}
             />
           </div>
-          <div className="p-4 border-t-2 bg-white w-full flex justify-end">
-            <button
-              onClick={() => {
-                setPreview(!preview);
-              }}
-              className="border focus:outline-none rounded border-black px-2 bg-white"
-            >
-              {!preview ? "Preview PDF" : "Add more Colors"}
-            </button>
+          <div className="p-4 border-t-2 bg-white w-full flex">
+            <div className="flex flex-col flex-1">
+              Tips:
+              {hints.values.map((hint) => (
+                <p>- {hint}</p>
+              ))}
+            </div>
+            <div>
+              <button
+                onClick={() => {
+                  setPreview(!preview);
+                }}
+                className="border focus:outline-none rounded border-black px-2 bg-white"
+              >
+                {!preview ? "Preview PDF" : "Add more Colors"}
+              </button>
+            </div>
           </div>
         </div>
       </main>
