@@ -25,7 +25,7 @@ const SymbolList = ({
         Clear All
       </button>
     </div>
-    <div className="overflow-y-scroll flex flex-col">
+    <div className="overflow-auto flex flex-col">
       <List
         values={values}
         onChange={({ oldIndex, newIndex }) => onOrderChange(oldIndex, newIndex)}
@@ -79,7 +79,7 @@ const LegendItem = React.forwardRef(
               label="White"
               id={value.orderId}
               ripple={false}
-              color="white"
+              color="blue"
               onChange={() => {
                 onTextColorChange(value.orderId);
               }}
@@ -99,7 +99,7 @@ const LegendItem = React.forwardRef(
           title="Remove color"
           className="border focus:outline-none hover:shadow hover:text-white hover:bg-red-500 text-red-500 font-bold bg-white rounded px-2"
           onClick={() => {
-            removeRow(value.orderId);
+            removeRow(value);
           }}
         >
           X

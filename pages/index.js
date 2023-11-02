@@ -55,7 +55,7 @@ export default function Symbols() {
 
   function removeRow(value) {
     let newList = [...symbolList];
-    newList = newList.filter((n) => n.dmc != value);
+    newList = newList.filter((n) => n.dmc != value.dmc);
     setSymbolList(newList);
   }
 
@@ -65,102 +65,110 @@ export default function Symbols() {
   };
 
   return (
-    <div className="overflow-hidden h-screen w-screen flex flex-col">
+    <div className="overflow-hidden h-screen w-screen flex flex-col bg-[url('/closeup.jpg')] bg-center bg-cover">
       <Head>
         <title>{PageTitle}</title>
       </Head>
-      <main className="flex flex-1 flex-col overflow-hidden max-w-7xl self-center xl:border-2 w-full xl:rounded-lg xl:m-4 xl:p-2">
-        <PageHeader
-          onChangeName={setProjectName}
-          projectName={projectName}
-          className="flex flex-row px-2 pb-2 border-b-2 flex-wrap items-center justify-between"
-          title={PageTitle}
-        >
-          <div className="flex flex-row flex-wrap gap-2">
-            <div>
-              <Select label="Shape" value={shape} onChange={setShape} size="lg">
-                <Option value="square">Square</Option>
-                <Option value="circle">Circle</Option>
-              </Select>
+      <div className="overflow-hidden h-full w-full flex flex-col backdrop-blur-sm ">
+        <main className="flex flex-1 flex-col overflow-hidden max-w-7xl self-center xl:border-2 w-full xl:rounded-lg xl:m-4 xl:p-2 bg-white">
+          <PageHeader
+            onChangeName={setProjectName}
+            projectName={projectName}
+            className="flex flex-row px-2 pb-2 border-b-2 flex-wrap items-center justify-between"
+            title={PageTitle}
+          >
+            <div className="flex flex-row flex-wrap gap-2">
+              <div>
+                <Select
+                  label="Shape"
+                  value={shape}
+                  onChange={setShape}
+                  size="lg"
+                  color="blue-gray"
+                >
+                  <Option value="square">Square</Option>
+                  <Option value="circle">Circle</Option>
+                </Select>
+              </div>
+              <div>
+                <Select
+                  label="Size"
+                  value={size}
+                  onChange={setSize}
+                  size="lg"
+                  color="blue-gray"
+                >
+                  <Option value="thirdInch">1/3"</Option>
+                  <Option value="halfInch">1/2"</Option>
+                  <Option value="inch">1"</Option>
+                </Select>
+              </div>
             </div>
-            <div>
-              <Select
-                label="Size"
-                value={size}
-                onChange={setSize}
-                size="lg"
-                color="black"
-              >
-                <Option value="thirdInch">1/3"</Option>
-                <Option value="halfInch">1/2"</Option>
-                <Option value="inch">1"</Option>
-              </Select>
-            </div>
-          </div>
-        </PageHeader>
-        <div className="overflow-hidden flex flex-1 flex-col">
-          <div className="overflow-hidden flex flex-1 flex-col sm:flex-row">
-            <div className="flex flex-none sm:flex-1 flex-col">
-              {!preview && (
-                <div className="flex-1 flex flex-col">
-                  {isDuplicate && (
-                    <div
-                      style={{
-                        display: "flex",
-                        color: "tomato",
-                        fontWeight: "bold",
-                        justifyContent: "center",
-                      }}
-                    >
-                      {`Symbol '${enteredValue.symbol}' or DMC# ${enteredValue.dmc} was a duplicate!`}
-                    </div>
-                  )}
-                  <EnterSymbols
-                    className="p-4 flex-1 flex flex-col"
-                    onEnterSymbol={onEnterSymbol}
-                  />
-                </div>
-              )}
-              {preview && (
-                <div className="flex-1 flex flex-col bg-blue-100">
-                  <PDFViewer height={"100%"}>
-                    <PreviewPDF
-                      data={{ symbolList, shape, size, projectName }}
+          </PageHeader>
+          <div className="overflow-hidden flex flex-1 flex-col">
+            <div className="overflow-hidden flex flex-1 flex-col sm:flex-row">
+              <div className="flex flex-none sm:flex-1 flex-col">
+                {!preview && (
+                  <div className="flex-1 flex flex-col">
+                    {isDuplicate && (
+                      <div
+                        style={{
+                          display: "flex",
+                          color: "tomato",
+                          fontWeight: "bold",
+                          justifyContent: "center",
+                        }}
+                      >
+                        {`Symbol '${enteredValue.symbol}' or DMC# ${enteredValue.dmc} was a duplicate!`}
+                      </div>
+                    )}
+                    <EnterSymbols
+                      className="p-4 flex-1 flex flex-col"
+                      onEnterSymbol={onEnterSymbol}
                     />
-                  </PDFViewer>
-                </div>
-              )}
+                  </div>
+                )}
+                {preview && (
+                  <div className="flex-1 flex flex-col bg-blue-100">
+                    <PDFViewer height={"100%"}>
+                      <PreviewPDF
+                        data={{ symbolList, shape, size, projectName }}
+                      />
+                    </PDFViewer>
+                  </div>
+                )}
+              </div>
+              <SymbolList
+                className="overflow-hidden flex flex-1 flex-col gap-2 p-4 max-w-md min-w-[208px] sm:border-l-2 sm:border-t-0 border-t-2 border-l-0 sm:my-4"
+                values={symbolList}
+                onTextColorChange={onTextColorChange}
+                onClear={onClear}
+                removeRow={removeRow}
+                profile={shape}
+                onOrderChange={updateListOrder}
+              />
             </div>
-            <SymbolList
-              className="overflow-hidden flex flex-1 flex-col gap-2 p-4 max-w-md min-w-[208px] sm:border-l-2 sm:border-t-0 border-t-2 border-l-0 sm:my-4"
-              values={symbolList}
-              onTextColorChange={onTextColorChange}
-              onClear={onClear}
-              removeRow={removeRow}
-              profile={shape}
-              onOrderChange={updateListOrder}
-            />
+            <div className="p-4 border-t-2 bg-white w-full flex">
+              <div className="flex flex-col flex-1">
+                Tips:
+                {hints.values.map((hint) => (
+                  <p key={hint}>- {hint}</p>
+                ))}
+              </div>
+              <div>
+                <button
+                  onClick={() => {
+                    setPreview(!preview);
+                  }}
+                  className="border focus:outline-none rounded border-black px-2 bg-white"
+                >
+                  {!preview ? "Preview PDF" : "Add more Colors"}
+                </button>
+              </div>
+            </div>
           </div>
-          <div className="p-4 border-t-2 bg-white w-full flex">
-            <div className="flex flex-col flex-1">
-              Tips:
-              {hints.values.map((hint) => (
-                <p>- {hint}</p>
-              ))}
-            </div>
-            <div>
-              <button
-                onClick={() => {
-                  setPreview(!preview);
-                }}
-                className="border focus:outline-none rounded border-black px-2 bg-white"
-              >
-                {!preview ? "Preview PDF" : "Add more Colors"}
-              </button>
-            </div>
-          </div>
-        </div>
-      </main>
+        </main>
+      </div>
     </div>
   );
 }
