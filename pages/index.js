@@ -160,7 +160,7 @@ export default function Symbols() {
                   onClick={() => {
                     setPreview(!preview);
                   }}
-                  className="border focus:outline-none rounded border-black px-2 bg-white"
+                  className="border-pink-600 border-2 focus:outline-none rounded-lg py-2 px-4 bg-pink-500 shadow-lg shadow-pink-500/50 text-white hover:brightness-105 active:brightness-95"
                 >
                   {!preview ? "Preview PDF" : "Add more Colors"}
                 </button>
