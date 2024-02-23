@@ -8,7 +8,7 @@ import { PageHeader } from "../components/header";
 import { arrayMove } from "react-movable";
 import hints from "../lib/hints.json";
 
-const PageTitle = "Diamond Drill Legend";
+const PageTitle = "Diamond Painting Legend Maker";
 
 export default function Symbols() {
   const [symbolList, setSymbolList] = useState([]);
@@ -68,6 +68,10 @@ export default function Symbols() {
     <div className="overflow-hidden h-screen w-screen flex flex-col bg-[url('/closeup.jpg')] bg-center bg-cover">
       <Head>
         <title>{PageTitle}</title>
+        <meta
+          name="description"
+          content="Create and print your own Diamond Painting legend. Create stickers with colors matching DMC codes. Organize drills your way."
+        />
       </Head>
       <div className="overflow-hidden h-full w-full flex flex-col backdrop-blur-sm ">
         <main className="flex flex-1 flex-col overflow-hidden max-w-7xl self-center xl:border-2 w-full xl:rounded-lg xl:m-4 xl:p-2 bg-white">
@@ -148,8 +152,8 @@ export default function Symbols() {
                 onOrderChange={updateListOrder}
               />
             </div>
-            <div className="p-4 border-t-2 bg-white w-full flex">
-              <div className="flex flex-col flex-1">
+            <div className="p-4 border-t-2 bg-white w-full flex md:justify-between justify-end items-center flex-row">
+              <div className="md:block hidden">
                 Tips:
                 {hints.values.map((hint) => (
                   <p key={hint}>- {hint}</p>
