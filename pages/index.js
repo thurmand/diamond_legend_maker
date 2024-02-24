@@ -74,11 +74,11 @@ export default function Symbols() {
         />
       </Head>
       <div className="overflow-hidden h-full w-full flex flex-col backdrop-blur-sm ">
-        <main className="flex flex-1 flex-col overflow-hidden max-w-7xl self-center xl:border-2 w-full xl:rounded-lg xl:m-4 xl:p-2 bg-white">
+        <main className="flex flex-1 flex-col overflow-hidden max-w-7xl self-center xl:border-2 w-full xl:rounded-lg xl:m-4 xl:p-2 bg-gray-200/95 ">
           <PageHeader
             onChangeName={setProjectName}
             projectName={projectName}
-            className="flex flex-row px-2 pb-2 border-b-2 flex-wrap items-center justify-between"
+            className="flex flex-row px-2 pb-2 border-b-2 border-gray-500 flex-wrap items-center justify-between"
             title={PageTitle}
           >
             <div className="flex flex-row flex-wrap gap-2">
@@ -129,6 +129,7 @@ export default function Symbols() {
                     <EnterSymbols
                       className="p-4 flex-1 flex flex-col"
                       onEnterSymbol={onEnterSymbol}
+                      shape={shape}
                     />
                   </div>
                 )}
@@ -143,7 +144,7 @@ export default function Symbols() {
                 )}
               </div>
               <SymbolList
-                className="overflow-hidden flex flex-1 flex-col gap-2 p-4 max-w-md min-w-[208px] sm:border-l-2 sm:border-t-0 border-t-2 border-l-0 sm:my-4"
+                className="overflow-hidden flex flex-1 flex-col gap-2 p-4 max-w-md min-w-[208px] sm:border-l-2 sm:border-t-0 border-t-2 border-l-0 sm:my-4 border-gray-500"
                 values={symbolList}
                 onTextColorChange={onTextColorChange}
                 onClear={onClear}
@@ -152,7 +153,7 @@ export default function Symbols() {
                 onOrderChange={updateListOrder}
               />
             </div>
-            <div className="p-4 border-t-2 bg-white w-full flex md:justify-between justify-end items-center flex-row">
+            <div className="p-4 border-t-2 border-gray-500 w-full flex md:justify-between justify-end items-center flex-row">
               <div className="md:block hidden">
                 Tips:
                 {hints.values.map((hint) => (
