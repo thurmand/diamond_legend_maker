@@ -1,5 +1,5 @@
 import Head from "next/head";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import SymbolList from "../components/symbolList";
 import { Page, Text, View, Document, PDFViewer } from "@react-pdf/renderer";
 import EnterSymbols from "../components/enterSymbol";
@@ -7,6 +7,7 @@ import { Option, Select } from "@material-tailwind/react";
 import { PageHeader } from "../components/header";
 import { arrayMove } from "react-movable";
 import hints from "../lib/hints.json";
+import { buildTestColors } from "../lib/testColors";
 
 const PageTitle = "Diamond Painting Legend Maker";
 
@@ -18,28 +19,36 @@ export default function Symbols() {
   const [preview, setPreview] = useState(false);
   const [isDuplicate, setIsDuplicate] = useState(false);
   const [enteredValue, setEnteredValue] = useState({});
+  const nextItemId = useRef(1);
+  const hasSymbols = symbolList.length > 0;
 
   function onEnterSymbol(values) {
     setEnteredValue(values);
-    if (symbolList.find((n) => n.symbol == values.symbol && n.symbol != " ")) {
+    if (symbolList.find((n) => n.symbol === values.symbol && n.symbol !== " ")) {
       setIsDuplicate(true);
       return;
     }
-    if (symbolList.find((n) => n.dmc == values.dmc)) {
+    if (symbolList.find((n) => n.dmc === values.dmc)) {
       setIsDuplicate(true);
       return;
     }
     setIsDuplicate(false);
     const newList = [...symbolList];
-    values.text = "black";
-    values.orderId = newList.length + 1;
-    newList.unshift(values);
+    const newValue = {
+      ...values,
+      text: "black",
+      id: nextItemId.current++,
+    };
+    newList.unshift(newValue);
     setSymbolList(newList);
   }
 
   function onTextColorChange(id) {
     const newList = [...symbolList];
-    var x = newList.findIndex((n) => n.orderId == id);
+    var x = newList.findIndex((n) => n.id === id);
+    if (x < 0) {
+      return;
+    }
     if (newList[x].text === "white") {
       newList[x].text = "black";
     } else {
@@ -50,12 +59,16 @@ export default function Symbols() {
   }
 
   function onClear() {
+    if (!hasSymbols) {
+      return;
+    }
     setSymbolList([]);
+    setPreview(false);
   }
 
   function removeRow(value) {
     let newList = [...symbolList];
-    newList = newList.filter((n) => n.dmc != value.dmc);
+    newList = newList.filter((n) => n.dmc !== value.dmc);
     setSymbolList(newList);
   }
 
@@ -64,8 +77,45 @@ export default function Symbols() {
     setSymbolList(newList);
   };
 
+  function addTestColors(count) {
+    setSymbolList((previousList) => {
+      const generated = buildTestColors({
+        count,
+        existingValues: previousList,
+        startId: nextItemId.current,
+      });
+
+      if (generated.length === 0) {
+        return previousList;
+      }
+
+      nextItemId.current += generated.length;
+      return [...generated.reverse(), ...previousList];
+    });
+  }
+
+  useEffect(() => {
+    if (typeof window === "undefined") {
+      return;
+    }
+
+    window.diamondTest = {
+      addColors: (count = 20) => addTestColors(count),
+      clear: () => {
+        setSymbolList([]);
+        setPreview(false);
+      },
+    };
+
+    return () => {
+      delete window.diamondTest;
+    };
+  }, []);
+
   return (
-    <div className="overflow-hidden h-screen w-screen flex flex-col bg-[url('/closeup.jpg')] bg-center bg-cover">
+    <div
+      className={`overflow-hidden h-screen w-screen flex flex-col bg-[url('/closeup.jpg')] bg-center bg-cover`}
+    >
       <Head>
         <title>{PageTitle}</title>
         <meta
@@ -116,6 +166,8 @@ export default function Symbols() {
                   <div className="flex-1 flex flex-col">
                     {isDuplicate && (
                       <div
+                        role="alert"
+                        aria-live="polite"
                         style={{
                           display: "flex",
                           color: "tomato",
@@ -163,12 +215,21 @@ export default function Symbols() {
               <div>
                 <button
                   onClick={() => {
+                    if (!hasSymbols && !preview) {
+                      return;
+                    }
                     setPreview(!preview);
                   }}
-                  className="border-pink-600 border-2 focus:outline-none rounded-lg py-2 px-4 bg-pink-500 shadow-lg shadow-pink-500/50 text-white hover:brightness-105 active:brightness-95"
+                  disabled={!hasSymbols && !preview}
+                  className="border-pink-600 border-2 focus:outline-none rounded-lg py-2 px-4 bg-pink-500 shadow-lg shadow-pink-500/50 text-white hover:brightness-105 active:brightness-95 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:brightness-100"
                 >
                   {!preview ? "Preview PDF" : "Add more Colors"}
                 </button>
+                {!hasSymbols && !preview && (
+                  <p className="text-xs text-gray-700 mt-1 text-right">
+                    Add at least one color to preview.
+                  </p>
+                )}
               </div>
             </div>
           </div>
@@ -201,7 +262,7 @@ function PreviewPDF({ data }) {
                 alignItems: "center",
                 justifyContent: "center",
                 backgroundColor: n.hex,
-                borderRadius: shape == "square" ? 0 : 99,
+                borderRadius: shape === "square" ? 0 : 99,
                 width: 72 / a4Inches[size].size,
                 height: 72 / a4Inches[size].size,
               }}

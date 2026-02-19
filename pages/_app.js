@@ -1,4 +1,4 @@
-import "tailwindcss/tailwind.css";
+import "../globals.css";
 import { ThemeProvider } from "@material-tailwind/react";
 import { Analytics } from "@vercel/analytics/react";
 

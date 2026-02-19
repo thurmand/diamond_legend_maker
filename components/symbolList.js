@@ -12,20 +12,26 @@ const SymbolList = ({
   onOrderChange,
 }) => (
   <div className={className}>
-    <p>Total: {values.length}</p>
+    <p className="font-semibold">Total: {values.length}</p>
     <div className="flex items-center gap-2">
       <div className="flex-1">Symbol Color</div>
       <p className="flex-1"></p>
       <p className="flex-1">Color Code</p>
       <button
         title="Clear all"
-        className="border focus:outline-none hover:shadow hover:text-white hover:bg-red-500 text-red-500 font-bold bg-white rounded px-2"
+        className="border focus:outline-none hover:shadow hover:text-white hover:bg-red-500 text-red-500 font-bold bg-white rounded px-2 disabled:opacity-40 disabled:cursor-not-allowed"
         onClick={onClear}
+        disabled={values.length === 0}
       >
         Clear All
       </button>
     </div>
     <div className="overflow-auto flex flex-col">
+      {values.length === 0 && (
+        <p className="text-sm text-gray-700 mt-3">
+          No colors yet. Add a symbol and valid DMC code to start your legend.
+        </p>
+      )}
       <List
         values={values}
         onChange={({ oldIndex, newIndex }) => onOrderChange(oldIndex, newIndex)}
@@ -76,12 +82,13 @@ const LegendItem = React.forwardRef(
         <div className="flex flex-1 flex-col">
           {value.symbol !== " " && (
             <Switch
-              label="White"
-              id={value.orderId}
+              label="White Text"
+              id={value.id}
               ripple={false}
               color="blue"
+              checked={value.text === "white"}
               onChange={() => {
-                onTextColorChange(value.orderId);
+                onTextColorChange(value.id);
               }}
             />
           )}
@@ -97,6 +104,7 @@ const LegendItem = React.forwardRef(
         <p className="flex-1 text-xl flex">{value.dmc}</p>
         <button
           title="Remove color"
+          aria-label={`Remove DMC ${value.dmc}`}
           className="border focus:outline-none hover:shadow hover:text-white hover:bg-red-500 text-red-500 font-bold bg-white rounded px-2"
           onClick={() => {
             removeRow(value);

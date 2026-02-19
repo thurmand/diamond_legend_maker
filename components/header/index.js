@@ -8,11 +8,11 @@ export const PageHeader = ({
   title,
 }) => (
   <>
-    <h1 className="font-bold text-xl">{title}</h1>
-    <h2>
+    <h1 className="font-bold text-2xl">{title}</h1>
+    <p className="text-gray-800">
       Create and print your own Diamond Painting legend. Organize drills your
       way.
-    </h2>
+    </p>
     <div className={className}>
       <div>
         <ProjectName

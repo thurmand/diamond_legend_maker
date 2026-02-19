@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import dmcList from "../lib/dcm2.json";
 import SampleView from "./sample";
 import { Switch } from "@material-tailwind/react";
@@ -8,8 +8,9 @@ export default function EnterSymbols({ className, onEnterSymbol, shape }) {
   const [dmc, setDmc] = useState("");
   const [background, setBackground] = useState("transparent");
   const [isWhiteSpace, setWhiteSpace] = useState(false);
-  let symbolInput = null;
-  let dmcInput = null;
+  const symbolInputRef = useRef(null);
+  const dmcInputRef = useRef(null);
+  const isValidDmc = !!dmcList[dmc]?.hex;
 
   useEffect(() => {
     if (dmcList[dmc]?.hex) {
@@ -20,7 +21,7 @@ export default function EnterSymbols({ className, onEnterSymbol, shape }) {
   }, [dmc]);
 
   useEffect(() => {
-    symbolInput.focus();
+    symbolInputRef.current?.focus();
     document.addEventListener("keydown", handleKeyPress);
     return () => {
       document.removeEventListener("keydown", handleKeyPress);
@@ -30,7 +31,7 @@ export default function EnterSymbols({ className, onEnterSymbol, shape }) {
   useEffect(() => {
     if (isWhiteSpace) {
       setSymbol(" ");
-      dmcInput.focus();
+      dmcInputRef.current?.focus();
     } else {
       setSymbol("");
     }
@@ -42,34 +43,37 @@ export default function EnterSymbols({ className, onEnterSymbol, shape }) {
     }
   };
 
-  function onEnter() {
+  function onEnter(event) {
     if (event.key === "Enter") {
-      if (dmcList[dmc]?.hex && symbol != "") {
+      if (isValidDmc && symbol !== "") {
         onEnterSymbol({ symbol, hex: `#${dmcList[dmc].hex}`, dmc });
         if (!isWhiteSpace) {
           setSymbol("");
         }
         setDmc("");
         if (isWhiteSpace) {
-          dmcInput.focus();
+          dmcInputRef.current?.focus();
         } else {
-          symbolInput.focus();
+          symbolInputRef.current?.focus();
         }
       }
     }
     if (event.key === "Backspace" && dmc === "") {
       if (!isWhiteSpace) {
-        symbolInput.focus();
+        symbolInputRef.current?.focus();
       }
     }
   }
 
   return (
     <div className={className}>
-      <div className="flex justify-evenly bg-white/60 p-4 rounded-lg border border-gray-300 shadow-lg">
+      <div className="flex justify-evenly bg-white/60 p-4 rounded-lg border border-gray-300 shadow-lg gap-4">
         <div className="flex flex-col">
-          <p className="text-3xl">Symbol</p>
+          <label className="text-3xl" htmlFor="symbol-input">
+            Symbol
+          </label>
           <input
+            id="symbol-input"
             onFocus={(event) => event.target.select()}
             className="border-b-2 border-gray-400 text-4xl mt-2 w-24 focus:outline-none bg-transparent"
             type="text"
@@ -78,14 +82,13 @@ export default function EnterSymbols({ className, onEnterSymbol, shape }) {
             onChange={({ target }) => {
               setSymbol(target.value);
               if (target.value !== "") {
-                dmcInput.focus();
+                dmcInputRef.current?.focus();
               }
             }}
             autoComplete="off"
-            ref={(ref) => {
-              symbolInput = ref;
-            }}
+            ref={symbolInputRef}
             disabled={isWhiteSpace}
+            aria-describedby="symbol-helper"
           />
           <div className="pt-4">
             <Switch
@@ -96,34 +99,49 @@ export default function EnterSymbols({ className, onEnterSymbol, shape }) {
               onChange={() => setWhiteSpace(!isWhiteSpace)}
               checked={isWhiteSpace}
             />
+            <p id="symbol-helper" className="text-xs pt-1 text-gray-700">
+              Tip: press Ctrl + Space to toggle auto-space mode.
+            </p>
           </div>
         </div>
         <div className="p-2" />
         <div className="flex flex-col items-center">
-          <p className="text-3xl">Color Code</p>
+          <label className="text-3xl" htmlFor="dmc-input">
+            Color Code
+          </label>
           <input
+            id="dmc-input"
             onFocus={(event) => event.target.select()}
             className="mt-2 border-b-2 border-gray-400 text-4xl w-24 focus:outline-none bg-transparent"
             type="text"
             maxLength="5"
             value={dmc}
+            inputMode="numeric"
+            pattern="[0-9]*"
             onChange={({ target }) => {
-              if (isNaN(target.value)) {
-                return;
-              }
-              setDmc(target.value);
+              setDmc(target.value.replace(/\D/g, ""));
             }}
             onKeyDown={onEnter}
             autoComplete="off"
-            ref={(ref) => {
-              dmcInput = ref;
-            }}
+            ref={dmcInputRef}
+            aria-invalid={dmc !== "" && !isValidDmc}
+            aria-describedby="dmc-helper"
           />
+          <p
+            id="dmc-helper"
+            className={`text-xs pt-1 ${dmc !== "" && !isValidDmc ? "text-red-700" : "text-gray-700"}`}
+          >
+            {dmc === ""
+              ? "Enter a DMC number then press Enter."
+              : isValidDmc
+                ? `Matched ${background}`
+                : "Unknown DMC code."}
+          </p>
         </div>
       </div>
-      <div className="flex justify-center items-center felx-1 flex-col py-8">
+      <div className="flex items-center flex-1 flex-col py-8">
         <SampleView symbol={symbol} color={background} shape={shape} />
-        {background != "white" && (
+        {background !== "white" && (
           <p className="text-sm justify-end mt-2">{`color: ${
             background === "transparent" ? "n/a" : background
           }`}</p>
