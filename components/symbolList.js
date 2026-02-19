@@ -1,6 +1,7 @@
 import { Switch } from "@material-tailwind/react";
 import { List } from "react-movable";
 import React from "react";
+import DrawnSymbol from "./drawnSymbol";
 
 const SymbolList = ({
   values,
@@ -57,13 +58,13 @@ export default SymbolList;
 function ColorBlock({ symbol, color, textColor, profile }) {
   return (
     <div
-      className="flex justify-center items-center text-xl"
+      className="flex justify-center items-center text-xl relative"
       style={{
         width: 32,
         backgroundColor: color,
         color: textColor,
         borderRadius: profile == "circle" ? 50 : 0,
-        height: !!symbol && 32,
+        height: 32,
       }}
     >
       {symbol}
@@ -80,26 +81,43 @@ const LegendItem = React.forwardRef(
         ref={ref}
       >
         <div className="flex flex-1 flex-col">
-          {value.symbol !== " " && (
-            <Switch
-              label="White Text"
-              id={value.id}
-              ripple={false}
-              color="blue"
-              checked={value.text === "white"}
-              onChange={() => {
-                onTextColorChange(value.id);
-              }}
-            />
-          )}
+          <Switch
+            label="White Text"
+            id={value.id}
+            ripple={false}
+            color="blue"
+            checked={value.text === "white"}
+            onChange={() => {
+              onTextColorChange(value.id);
+            }}
+          />
         </div>
         <div className="flex flex-1 ">
-          <ColorBlock
-            symbol={value.symbol}
-            textColor={value.text}
-            color={value.hex}
-            profile={profile}
-          />
+          {value.symbolType === "drawn" ? (
+            <div
+              className="flex justify-center items-center relative"
+              style={{
+                width: 32,
+                height: 32,
+                backgroundColor: value.hex,
+                borderRadius: profile == "circle" ? 50 : 0,
+              }}
+            >
+              <DrawnSymbol
+                strokes={value.drawnStrokes}
+                color={value.text}
+                className="w-6 h-6"
+                strokeWidth={0.15}
+              />
+            </div>
+          ) : (
+            <ColorBlock
+              symbol={value.symbol}
+              textColor={value.text}
+              color={value.hex}
+              profile={profile}
+            />
+          )}
         </div>
         <p className="flex-1 text-xl flex">{value.dmc}</p>
         <button

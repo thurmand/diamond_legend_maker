@@ -1,7 +1,15 @@
 import Head from "next/head";
 import { useEffect, useRef, useState } from "react";
 import SymbolList from "../components/symbolList";
-import { Page, Text, View, Document, PDFViewer } from "@react-pdf/renderer";
+import {
+  Page,
+  Text,
+  View,
+  Document,
+  PDFViewer,
+  Svg,
+  Path,
+} from "@react-pdf/renderer";
 import EnterSymbols from "../components/enterSymbol";
 import { Option, Select } from "@material-tailwind/react";
 import { PageHeader } from "../components/header";
@@ -26,7 +34,10 @@ export default function Symbols() {
 
   function onEnterSymbol(values) {
     setEnteredValue(values);
-    if (symbolList.find((n) => n.symbol === values.symbol && n.symbol !== " ")) {
+    if (
+      values.symbolType !== "drawn" &&
+      symbolList.find((n) => n.symbol === values.symbol && n.symbol !== " ")
+    ) {
       setIsDuplicate(true);
       return;
     }
@@ -189,7 +200,9 @@ export default function Symbols() {
                           justifyContent: "center",
                         }}
                       >
-                        {`Symbol '${enteredValue.symbol}' or DMC# ${enteredValue.dmc} was a duplicate!`}
+                        {enteredValue.symbolType === "drawn"
+                          ? `DMC# ${enteredValue.dmc} is already in the list.`
+                          : `Symbol '${enteredValue.symbol}' or DMC# ${enteredValue.dmc} was a duplicate!`}
                       </div>
                     )}
                     <EnterSymbols
@@ -283,18 +296,48 @@ function PreviewPDF({ data }) {
                 height: 72 / sizeConfig.size,
               }}
             >
-              <Text
-                style={{
-                  color: n.text,
-                  fontSize: sizeConfig.font,
-                }}
-              >
-                {n.symbol}
-              </Text>
+              {n.symbolType === "drawn" ? (
+                <Svg
+                  viewBox="0 0 1 1"
+                  style={{
+                    width: 48 / sizeConfig.size,
+                    height: 48 / sizeConfig.size,
+                  }}
+                >
+                  {(n.drawnStrokes || []).map((stroke, pathIndex) => (
+                    <Path
+                      key={pathIndex}
+                      d={strokeToPath(stroke)}
+                      stroke={n.text || "black"}
+                      strokeWidth={0.08}
+                      fill="none"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                  ))}
+                </Svg>
+              ) : (
+                <Text
+                  style={{
+                    color: n.text,
+                    fontSize: sizeConfig.font,
+                  }}
+                >
+                  {n.symbol}
+                </Text>
+              )}
             </View>
           ))}
         </View>
       </Page>
     </Document>
   );
+}
+
+function strokeToPath(stroke) {
+  if (!Array.isArray(stroke) || stroke.length === 0) {
+    return "";
+  }
+  const [first, ...rest] = stroke;
+  return `M ${first.x} ${first.y} ${rest.map((p) => `L ${p.x} ${p.y}`).join(" ")}`;
 }
