@@ -10,6 +10,8 @@ import hints from "../lib/hints.json";
 import { buildTestColors } from "../lib/testColors";
 
 const PageTitle = "Diamond Painting Legend Maker";
+const ALLOWED_SHAPES = new Set(["square", "circle"]);
+const ALLOWED_SIZES = new Set(["thirdInch", "halfInch", "inch"]);
 
 export default function Symbols() {
   const [symbolList, setSymbolList] = useState([]);
@@ -77,6 +79,18 @@ export default function Symbols() {
     setSymbolList(newList);
   };
 
+  const handleShapeChange = (value) => {
+    if (ALLOWED_SHAPES.has(value)) {
+      setShape(value);
+    }
+  };
+
+  const handleSizeChange = (value) => {
+    if (ALLOWED_SIZES.has(value)) {
+      setSize(value);
+    }
+  };
+
   function addTestColors(count) {
     setSymbolList((previousList) => {
       const generated = buildTestColors({
@@ -136,7 +150,7 @@ export default function Symbols() {
                 <Select
                   label="Shape"
                   value={shape}
-                  onChange={setShape}
+                  onChange={handleShapeChange}
                   size="lg"
                   color="blue-gray"
                 >
@@ -148,7 +162,7 @@ export default function Symbols() {
                 <Select
                   label="Size"
                   value={size}
-                  onChange={setSize}
+                  onChange={handleSizeChange}
                   size="lg"
                   color="blue-gray"
                 >
@@ -248,6 +262,8 @@ function PreviewPDF({ data }) {
     halfInch: { size: 2, font: 28 },
     inch: { size: 1, font: 60 },
   };
+  const sizeConfig = a4Inches[size] || a4Inches.inch;
+  const isCircle = shape === "circle";
   return (
     <Document>
       <Page size="LETTER" style={{ padding: 16 }} wrap>
@@ -262,15 +278,15 @@ function PreviewPDF({ data }) {
                 alignItems: "center",
                 justifyContent: "center",
                 backgroundColor: n.hex,
-                borderRadius: shape === "square" ? 0 : 99,
-                width: 72 / a4Inches[size].size,
-                height: 72 / a4Inches[size].size,
+                ...(isCircle ? { borderRadius: 99 } : {}),
+                width: 72 / sizeConfig.size,
+                height: 72 / sizeConfig.size,
               }}
             >
               <Text
                 style={{
                   color: n.text,
-                  fontSize: a4Inches[size].font,
+                  fontSize: sizeConfig.font,
                 }}
               >
                 {n.symbol}
